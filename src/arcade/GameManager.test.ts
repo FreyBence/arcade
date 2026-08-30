@@ -21,42 +21,45 @@ vi.mock('phaser', () => ({
 
 import { GameManager } from './GameManager'
 
-function definition(key: string): GameDefinition {
+function definition(key: string) {
   const scene = { sys: { settings: { key } } } as Phaser.Scene
-  return {
+  const createScene = vi.fn(() => scene)
+  const load = vi.fn().mockResolvedValue({ createScene })
+  const gameDefinition: GameDefinition = {
     id: key,
     title: key,
     description: '',
     icon: '',
-    load: vi.fn().mockResolvedValue({ createScene: () => scene }),
+    load,
   }
+  return { gameDefinition, load, createScene }
 }
 
 const managerCases = [
   {
     name: 'creates only one long-lived runtime',
     input: { operation: 'initialize' as const, initializeCount: 2 },
-    expected: { gameCreations: 1, activeSceneAdds: 0, sceneStops: 0, sceneRemovals: 0, destroys: 0 },
+    expected: { gameCreations: 1, gameLoads: 0, sceneCreations: 0, activeSceneAdds: 0, sceneStops: 0, sceneRemovals: 0, destroys: 0 },
   },
   {
     name: 'starts a scene after initialization',
     input: { operation: 'start' as const, sceneKeys: ['first'] },
-    expected: { gameCreations: 1, activeSceneAdds: 1, sceneStops: 0, sceneRemovals: 0, destroys: 0 },
+    expected: { gameCreations: 1, gameLoads: 1, sceneCreations: 1, activeSceneAdds: 1, sceneStops: 0, sceneRemovals: 0, destroys: 0 },
   },
   {
     name: 'stops the previous scene when switching',
     input: { operation: 'start' as const, sceneKeys: ['first', 'second'] },
-    expected: { gameCreations: 1, activeSceneAdds: 2, sceneStops: 1, sceneRemovals: 1, destroys: 0 },
+    expected: { gameCreations: 1, gameLoads: 2, sceneCreations: 2, activeSceneAdds: 2, sceneStops: 1, sceneRemovals: 1, destroys: 0 },
   },
   {
     name: 'safely ignores repeated stops',
     input: { operation: 'stop' as const, sceneKeys: ['active'], operationCount: 2 },
-    expected: { gameCreations: 1, activeSceneAdds: 1, sceneStops: 1, sceneRemovals: 1, destroys: 0 },
+    expected: { gameCreations: 1, gameLoads: 1, sceneCreations: 1, activeSceneAdds: 1, sceneStops: 1, sceneRemovals: 1, destroys: 0 },
   },
   {
     name: 'destroys the runtime only once during repeated teardown',
     input: { operation: 'destroy' as const, sceneKeys: ['active'], operationCount: 2 },
-    expected: { gameCreations: 1, activeSceneAdds: 1, sceneStops: 1, sceneRemovals: 1, destroys: 1 },
+    expected: { gameCreations: 1, gameLoads: 1, sceneCreations: 1, activeSceneAdds: 1, sceneStops: 1, sceneRemovals: 1, destroys: 1 },
   },
 ]
 
@@ -76,12 +79,13 @@ describe('GameManager lifecycle', () => {
     phaser.sceneManager.getScene.mockReturnValue({ scene: { stop } })
     const manager = new GameManager()
     const host = document.createElement('div')
+    const definitions = input.sceneKeys?.map((key) => definition(key)) ?? []
 
     if (input.operation === 'initialize') {
       for (let index = 0; index < input.initializeCount; index += 1) manager.initialize(host)
     } else {
       manager.initialize(host)
-      for (const key of input.sceneKeys) await manager.start(definition(key))
+      for (const fixture of definitions) await manager.start(fixture.gameDefinition)
       if (input.operation === 'stop') {
         for (let index = 0; index < input.operationCount; index += 1) manager.stop()
       }
@@ -92,6 +96,8 @@ describe('GameManager lifecycle', () => {
 
     expect({
       gameCreations: phaser.Game.mock.calls.length,
+      gameLoads: definitions.reduce((total, fixture) => total + fixture.load.mock.calls.length, 0),
+      sceneCreations: definitions.reduce((total, fixture) => total + fixture.createScene.mock.calls.length, 0),
       activeSceneAdds: phaser.sceneManager.add.mock.calls.length,
       sceneStops: stop.mock.calls.length,
       sceneRemovals: phaser.sceneManager.remove.mock.calls.length,
@@ -112,6 +118,6 @@ describe('GameManager lifecycle', () => {
   it.each(startErrorCases)('$name', async ({ input, expected }) => {
     const manager = new GameManager()
     if (input.initialized) manager.initialize(document.createElement('div'))
-    await expect(manager.start(definition(input.sceneKey))).rejects.toThrow(expected.error)
+    await expect(manager.start(definition(input.sceneKey).gameDefinition)).rejects.toThrow(expected.error)
   })
 })
