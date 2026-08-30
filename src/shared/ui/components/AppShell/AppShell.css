@@ -1,0 +1,16 @@
+.app-shell {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  background-image: radial-gradient(circle at top, var(--color-bg-glow), transparent 55%);
+}
+
+.app-shell__main {
+  min-width: 0;
+}
+
+.app-shell__overlays:empty {
+  display: none;
+}

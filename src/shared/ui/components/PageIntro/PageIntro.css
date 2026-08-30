@@ -1,0 +1,28 @@
+.page-intro {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--reading-width);
+}
+
+.page-intro__eyebrow,
+.page-intro__title,
+.page-intro__description {
+  margin: 0;
+}
+
+.page-intro__eyebrow {
+  color: var(--color-text-accent);
+  font: var(--type-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.page-intro__title {
+  color: var(--color-text-primary);
+  font: var(--type-display);
+}
+
+.page-intro__description {
+  color: var(--color-text-secondary);
+  font: var(--type-body-large);
+}
