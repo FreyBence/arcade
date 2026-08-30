@@ -1,3 +1,4 @@
+export * from './components/AppHeader'
 export * from './components/AppShell'
 export * from './components/Button'
 export * from './components/Card'

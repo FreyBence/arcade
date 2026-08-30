@@ -3,7 +3,7 @@ import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import type { GameDefinition } from './types'
 import { appConfig } from '../config'
-import { Button, IconButton } from '../shared/ui'
+import { AppHeader, AppHeaderAction, AppShell, IconButton } from '../shared/ui'
 
 export function ArcadeApp() {
   const gameHostRef = useRef<HTMLDivElement>(null)
@@ -47,14 +47,23 @@ export function ArcadeApp() {
   }
 
   return (
-    <main className="arcade-app">
-      <header className="app-header">
-        <Button variant="ghost" className="brand" onClick={returnToArcade} aria-label="Return to arcade home">
-          {appConfig.name}
-        </Button>
-        {activeGame && <Button variant="ghost" onClick={returnToArcade}>Exit game</Button>}
-      </header>
-
+    <AppShell
+      header={(
+        <AppHeader
+          brand={appConfig.name}
+          onHome={returnToArcade}
+          actions={activeGame && (
+            <AppHeaderAction
+              onClick={returnToArcade}
+              icon="×"
+              label="Exit game"
+              collapseOnSmall
+            />
+          )}
+        />
+      )}
+    >
+      <div className="arcade-app">
       {activeGame && (
         <section className="game-page" aria-live="polite">
           <div className="game-heading">
@@ -87,6 +96,7 @@ export function ArcadeApp() {
           </div>
         </section>
       )}
-    </main>
+      </div>
+    </AppShell>
   )
 }

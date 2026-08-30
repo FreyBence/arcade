@@ -4,25 +4,8 @@
 @import './shared/ui/styles/motion.css';
 
 .arcade-app {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background:
-    radial-gradient(circle at top, var(--color-bg-glow), transparent 58%),
-    var(--color-bg-base);
-}
-
-.app-header {
-  height: var(--header-height);
-  padding-inline-start: max(var(--page-gutter), env(safe-area-inset-left));
-  padding-inline-end: max(var(--page-gutter), env(safe-area-inset-right));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.app-header .brand {
-  font: var(--type-brand);
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height));
 }
 
 .catalogue,
