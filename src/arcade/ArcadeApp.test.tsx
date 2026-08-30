@@ -98,6 +98,8 @@ describe('ArcadeApp behavior', () => {
 
     const rendered = render(<ArcadeApp />)
     let loadingWasVisible = false
+    expect(rendered.container.querySelector('.app-shell')).toContainElement(rendered.container.querySelector('.app-header'))
+    expect(rendered.container.querySelector('.app-shell__main')).toContainElement(rendered.container.querySelector('.page-container'))
     expect(mocks.initialize).toHaveBeenCalledWith(rendered.container.querySelector('.game-host'))
 
     if (input.action === 'start' || input.action === 'exit' || input.action === 'start-error' || input.action === 'fullscreen') {

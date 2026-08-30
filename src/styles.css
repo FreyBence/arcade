@@ -3,22 +3,8 @@
 @import './shared/ui/styles/globals.css';
 @import './shared/ui/styles/motion.css';
 
-.arcade-app {
-  min-height: calc(100vh - var(--header-height));
-  min-height: calc(100dvh - var(--header-height));
-}
-
 .game-page {
   display: grid;
   gap: var(--space-6);
-}
-
-h1 {
-  margin: var(--space-1) 0 var(--space-4);
-  font: var(--type-display);
-}
-
-.catalogue .game-catalogue {
-  margin-top: var(--space-12);
 }
 

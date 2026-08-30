@@ -41,20 +41,20 @@ export function ArcadeApp() {
     <AppShell header={<AppHeader brand={appConfig.name} onHome={returnToArcade} actions={activeGame && (
       <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
     )} />}>
-      <div className="arcade-app">
-        <PageContainer className="game-page" spacing="standard" hidden={!activeGame}>
-          {activeGame && <GamePageHeader icon={activeGame.icon} title={activeGame.title} />}
-          <GameViewport ref={gameHostRef} className="game-host" active={Boolean(activeGame)} fullscreen={isFullscreen}>
-            {isLoading && <GameLoadingState />}
-            {loadError && <GameErrorState />}
-            {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
-          </GameViewport>
-        </PageContainer>
-        {!activeGame && <PageContainer className="catalogue" spacing="hero">
+      <PageContainer className="game-page" spacing="standard" hidden={!activeGame}>
+        {activeGame && <GamePageHeader icon={activeGame.icon} title={activeGame.title} />}
+        <GameViewport ref={gameHostRef} className="game-host" active={Boolean(activeGame)} fullscreen={isFullscreen}>
+          {isLoading && <GameLoadingState />}
+          {loadError && <GameErrorState />}
+          {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
+        </GameViewport>
+      </PageContainer>
+      {!activeGame && (
+        <PageContainer spacing="hero">
           <PageIntro eyebrow="Choose a game" title="Your pocket arcade" description="Games load only when you select them, so the arcade stays quick and lightweight." />
           <GameCatalogue games={gameRegistry} onSelect={(game) => void play(game)} />
-        </PageContainer>}
-      </div>
+        </PageContainer>
+      )}
     </AppShell>
   )
 }

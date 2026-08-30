@@ -2,4 +2,5 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--game-card-min-width)), 1fr));
   gap: var(--space-4);
+  margin-top: var(--space-12);
 }
