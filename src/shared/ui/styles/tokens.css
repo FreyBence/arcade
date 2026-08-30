@@ -27,6 +27,9 @@
   --color-overlay-strong: rgba(16, 21, 34, 0.8);
   --color-focus-ring: rgba(129, 140, 248, 0.35);
   --color-danger-focus-ring: rgba(239, 68, 68, 0.35);
+  --color-status-success: #4ade80;
+  --color-status-success-surface: rgba(74, 222, 128, 0.1);
+  --color-status-error-surface: rgba(239, 68, 68, 0.1);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -66,6 +69,7 @@
   --checkbox-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23101522' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m3 8 3 3 7-7'/%3E%3C/svg%3E");
   --focus-ring-width: 3px;
   --disabled-opacity: 0.7;
+  --toast-width: 360px;
 
   --breakpoint-phone: 520px;
   --breakpoint-tablet: 768px;
