@@ -1,0 +1,17 @@
+.game-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.game-card__copy {
+  display: grid;
+  flex: 1;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.game-card__title { color: var(--color-text-primary); font: var(--type-body); }
+.game-card__description { color: var(--color-text-secondary); font: var(--type-small); }
+.game-card__indicator { flex: 0 0 auto; color: var(--color-text-accent); }
