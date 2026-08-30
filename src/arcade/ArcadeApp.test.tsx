@@ -8,6 +8,11 @@ const mocks = vi.hoisted(() => ({
   start: vi.fn(),
   stop: vi.fn(),
   destroy: vi.fn(),
+  toggleFullscreen: vi.fn(),
+  isFullscreen: vi.fn(),
+  onFullscreenChange: vi.fn(),
+  unsubscribeFullscreen: vi.fn(),
+  fullscreenListener: undefined as ((isFullscreen: boolean) => void) | undefined,
 }))
 
 vi.mock('./GameManager', () => ({
@@ -16,6 +21,9 @@ vi.mock('./GameManager', () => ({
     start = mocks.start
     stop = mocks.stop
     destroy = mocks.destroy
+    toggleFullscreen = mocks.toggleFullscreen
+    isFullscreen = mocks.isFullscreen
+    onFullscreenChange = mocks.onFullscreenChange
   },
 }))
 
@@ -62,12 +70,24 @@ const appCases = [
     input: { action: 'unmount' as const },
     expected: { catalogueVisible: false, gameVisible: false, loadingVisible: false, stops: 0, destroys: 1 },
   },
+  {
+    name: 'expands an active game to fullscreen',
+    input: { action: 'fullscreen' as const },
+    expected: { catalogueVisible: false, gameVisible: true, loadingVisible: false, stops: 0, destroys: 0, fullscreenToggles: 1, exitFullscreenVisible: true },
+  },
 ]
 
 describe('ArcadeApp behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.start.mockResolvedValue(undefined)
+    mocks.isFullscreen.mockReturnValue(false)
+    mocks.onFullscreenChange.mockImplementation((listener: (isFullscreen: boolean) => void) => {
+      mocks.fullscreenListener = listener
+      listener(false)
+      return mocks.unsubscribeFullscreen
+    })
+    mocks.toggleFullscreen.mockImplementation(() => mocks.fullscreenListener?.(true))
   })
 
   it.each(appCases)('$name', async ({ input, expected }) => {
@@ -80,7 +100,7 @@ describe('ArcadeApp behavior', () => {
     let loadingWasVisible = false
     expect(mocks.initialize).toHaveBeenCalledWith(rendered.container.querySelector('.game-host'))
 
-    if (input.action === 'start' || input.action === 'exit' || input.action === 'start-error') {
+    if (input.action === 'start' || input.action === 'exit' || input.action === 'start-error' || input.action === 'fullscreen') {
       await user.click(screen.getByRole('button', { name: /Test Game/ }))
     }
     if (input.action === 'start') {
@@ -93,6 +113,9 @@ describe('ArcadeApp behavior', () => {
       await user.click(screen.getByRole('button', { name: 'Return to arcade home' }))
     }
     if (input.action === 'unmount') rendered.unmount()
+    if (input.action === 'fullscreen') {
+      await user.click(screen.getByRole('button', { name: 'Enter fullscreen' }))
+    }
 
     expect({
       catalogueVisible: screen.queryByRole('heading', { name: 'Your pocket arcade' }) !== null,
@@ -100,6 +123,8 @@ describe('ArcadeApp behavior', () => {
       loadingVisible: loadingWasVisible,
       stops: mocks.stop.mock.calls.length,
       destroys: mocks.destroy.mock.calls.length,
+      ...('fullscreenToggles' in expected ? { fullscreenToggles: mocks.toggleFullscreen.mock.calls.length } : {}),
+      ...('exitFullscreenVisible' in expected ? { exitFullscreenVisible: screen.queryByRole('button', { name: 'Exit fullscreen' }) !== null } : {}),
     }).toEqual(expected)
   })
 })

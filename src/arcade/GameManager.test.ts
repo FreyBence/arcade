@@ -5,16 +5,35 @@ import type { GameDefinition } from './types'
 const phaser = vi.hoisted(() => {
   const sceneManager = { add: vi.fn(), getScene: vi.fn(), remove: vi.fn() }
   const destroy = vi.fn()
+  const scaleListeners = new Map<string, () => void>()
+  const scale = {
+    isFullscreen: false,
+    refresh: vi.fn(),
+    on: vi.fn((event: string, listener: () => void) => scaleListeners.set(event, listener)),
+    off: vi.fn((event: string) => scaleListeners.delete(event)),
+    startFullscreen: vi.fn(() => {
+      scale.isFullscreen = true
+      scaleListeners.get('enterfullscreen')?.()
+    }),
+    stopFullscreen: vi.fn(() => {
+      scale.isFullscreen = false
+      scaleListeners.get('leavefullscreen')?.()
+    }),
+  }
   const Game = vi.fn(function () {
-    return { scene: sceneManager, destroy }
+    return { scene: sceneManager, scale, destroy }
   })
-  return { Game, sceneManager, destroy }
+  return { Game, sceneManager, destroy, scale, scaleListeners }
 })
 
 vi.mock('phaser', () => ({
   default: {
     AUTO: 'AUTO',
-    Scale: { FIT: 'FIT', CENTER_BOTH: 'CENTER_BOTH' },
+    Scale: {
+      FIT: 'FIT',
+      CENTER_BOTH: 'CENTER_BOTH',
+      Events: { ENTER_FULLSCREEN: 'enterfullscreen', LEAVE_FULLSCREEN: 'leavefullscreen' },
+    },
     Game: phaser.Game,
   },
 }))
@@ -112,8 +131,35 @@ const pendingStartCases = [
   },
 ]
 
+const viewportCases = [
+  {
+    name: 'refreshes the Phaser scale manager when the window resizes',
+    input: { action: 'resize' as const },
+    expected: { refreshes: 1, starts: 0, stops: 0, fullscreenStates: [false] },
+  },
+  {
+    name: 'refreshes the Phaser scale manager after orientation changes',
+    input: { action: 'orientationchange' as const },
+    expected: { refreshes: 1, starts: 0, stops: 0, fullscreenStates: [false] },
+  },
+  {
+    name: 'enters fullscreen and reports the viewport state',
+    input: { action: 'enter-fullscreen' as const },
+    expected: { refreshes: 1, starts: 1, stops: 0, fullscreenStates: [false, true] },
+  },
+  {
+    name: 'returns from fullscreen to the embedded viewport',
+    input: { action: 'exit-fullscreen' as const },
+    expected: { refreshes: 2, starts: 1, stops: 1, fullscreenStates: [false, true, false] },
+  },
+]
+
 describe('GameManager lifecycle', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    phaser.scale.isFullscreen = false
+    phaser.scaleListeners.clear()
+  })
 
   it.each(managerCases)('$name', async ({ input, expected }) => {
     const stop = vi.fn()
@@ -151,9 +197,11 @@ describe('GameManager lifecycle', () => {
         width: 960,
         height: 540,
         input: { activePointers: 3 },
-        scale: { mode: 'FIT', autoCenter: 'CENTER_BOTH' },
+        scale: { mode: 'FIT', autoCenter: 'CENTER_BOTH', fullscreenTarget: host },
       }))
     }
+
+    manager.destroy()
   })
 
   it.each(startErrorCases)('$name', async ({ input, expected }) => {
@@ -191,5 +239,30 @@ describe('GameManager lifecycle', () => {
       addedSceneKeys: phaser.sceneManager.add.mock.calls.map(([key]) => String(key)),
       destroys: phaser.destroy.mock.calls.length,
     }).toEqual(expected)
+
+    manager.destroy()
+  })
+
+  it.each(viewportCases)('$name', ({ input, expected }) => {
+    const manager = new GameManager()
+    const fullscreenStates: boolean[] = []
+    manager.initialize(document.createElement('div'))
+    manager.onFullscreenChange((isFullscreen) => fullscreenStates.push(isFullscreen))
+
+    if (input.action === 'resize' || input.action === 'orientationchange') {
+      window.dispatchEvent(new Event(input.action))
+    } else {
+      manager.toggleFullscreen()
+      if (input.action === 'exit-fullscreen') manager.toggleFullscreen()
+    }
+
+    expect({
+      refreshes: phaser.scale.refresh.mock.calls.length,
+      starts: phaser.scale.startFullscreen.mock.calls.length,
+      stops: phaser.scale.stopFullscreen.mock.calls.length,
+      fullscreenStates,
+    }).toEqual(expected)
+
+    manager.destroy()
   })
 })

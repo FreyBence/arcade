@@ -9,13 +9,18 @@ export function ArcadeApp() {
   const managerRef = useRef<GameManager | null>(null)
   const [activeGame, setActiveGame] = useState<GameDefinition | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     const manager = new GameManager()
     managerRef.current = manager
     manager.initialize(gameHostRef.current!)
+    const unsubscribeFullscreen = manager.onFullscreenChange(setIsFullscreen)
 
-    return () => manager.destroy()
+    return () => {
+      unsubscribeFullscreen()
+      manager.destroy()
+    }
   }, [])
 
   async function play(definition: GameDefinition) {
@@ -31,8 +36,13 @@ export function ArcadeApp() {
   }
 
   function returnToArcade() {
+    if (managerRef.current?.isFullscreen()) managerRef.current.toggleFullscreen()
     managerRef.current?.stop()
     setActiveGame(null)
+  }
+
+  function toggleFullscreen() {
+    managerRef.current?.toggleFullscreen()
   }
 
   return (
@@ -53,7 +63,13 @@ export function ArcadeApp() {
           {isLoading && <p>Loading game…</p>}
         </section>
       )}
-      <div ref={gameHostRef} className={activeGame ? 'game-host game-host-active' : 'game-host'} />
+      <div ref={gameHostRef} className={activeGame ? 'game-host game-host-active' : 'game-host'}>
+        {activeGame && (
+          <button className="fullscreen-button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>
+            {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          </button>
+        )}
+      </div>
       {!activeGame && (
         <section className="catalogue">
           <p className="eyebrow">Choose a game</p>
