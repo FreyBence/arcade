@@ -11,12 +11,14 @@
   background: var(--color-surface-default);
 }
 .game-viewport canvas { display: block; }
+.game-viewport--fullscreen,
 .game-viewport:fullscreen {
   width: 100vw;
   max-width: none;
   height: 100vh;
   height: 100dvh;
   aspect-ratio: auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   border: 0;
   border-radius: 0;
 }

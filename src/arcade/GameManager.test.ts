@@ -152,6 +152,11 @@ const viewportCases = [
     input: { action: 'exit-fullscreen' as const },
     expected: { refreshes: 2, starts: 1, stops: 1, fullscreenStates: [false, true, false] },
   },
+  {
+    name: 'reports fullscreen exit initiated by the browser',
+    input: { action: 'browser-exit-fullscreen' as const },
+    expected: { refreshes: 2, starts: 1, stops: 0, fullscreenStates: [false, true, false] },
+  },
 ]
 
 describe('GameManager lifecycle', () => {
@@ -254,6 +259,10 @@ describe('GameManager lifecycle', () => {
     } else {
       manager.toggleFullscreen()
       if (input.action === 'exit-fullscreen') manager.toggleFullscreen()
+      if (input.action === 'browser-exit-fullscreen') {
+        phaser.scale.isFullscreen = false
+        phaser.scaleListeners.get('leavefullscreen')?.()
+      }
     }
 
     expect({

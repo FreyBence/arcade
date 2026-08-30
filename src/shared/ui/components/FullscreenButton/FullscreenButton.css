@@ -1,0 +1,9 @@
+.fullscreen-button {
+  position: absolute;
+  z-index: 1;
+  top: max(var(--space-3), env(safe-area-inset-top));
+  right: max(var(--space-3), env(safe-area-inset-right));
+  color: var(--color-text-primary);
+  background: var(--color-overlay-strong);
+  border-color: var(--color-border-strong);
+}

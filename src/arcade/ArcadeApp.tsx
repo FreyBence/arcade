@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { appConfig } from '../config'
-import { AppHeader, AppHeaderAction, AppShell, GameCatalogue, GameErrorState, GameLoadingState, GamePageHeader, GameViewport, IconButton, PageContainer, PageIntro } from '../shared/ui'
+import { AppHeader, AppHeaderAction, AppShell, FullscreenButton, GameCatalogue, GameErrorState, GameLoadingState, GamePageHeader, GameViewport, PageContainer, PageIntro } from '../shared/ui'
 import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import type { GameDefinition } from './types'
@@ -44,12 +44,10 @@ export function ArcadeApp() {
       <div className="arcade-app">
         <PageContainer className="game-page" spacing="standard" hidden={!activeGame}>
           {activeGame && <GamePageHeader icon={activeGame.icon} title={activeGame.title} />}
-          <GameViewport ref={gameHostRef} className="game-host" active={Boolean(activeGame)}>
+          <GameViewport ref={gameHostRef} className="game-host" active={Boolean(activeGame)} fullscreen={isFullscreen}>
             {isLoading && <GameLoadingState />}
             {loadError && <GameErrorState />}
-            {activeGame && <IconButton className="fullscreen-button" onClick={() => managerRef.current?.toggleFullscreen()} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>
-              <span aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span>
-            </IconButton>}
+            {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
           </GameViewport>
         </PageContainer>
         {!activeGame && <PageContainer className="catalogue" spacing="hero">
