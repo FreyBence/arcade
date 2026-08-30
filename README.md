@@ -42,6 +42,30 @@ npm run lint
 npm run build
 ```
 
+## Unit testing
+
+Run the Vitest unit-test suite once with:
+
+```bash
+npm test
+```
+
+For continuous feedback while developing, use watch mode:
+
+```bash
+npm run test:watch
+```
+
+Add or update unit tests for every feature change. Tests should cover core behavior and public contracts, remain deterministic, and follow the data-driven `name`, `input`, and `expected` convention documented in [`rules/testing.md`](rules/testing.md).
+
+Before opening a pull request, run the complete verification set:
+
+```bash
+npm test
+npm run lint
+npm run build
+```
+
 ## Local database
 
 Docker Compose runs PostgreSQL for local development. Copy `.env.example` to `.env` if it does not already exist, then start the database and apply migrations:
