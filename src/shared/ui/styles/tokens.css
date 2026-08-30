@@ -25,6 +25,8 @@
   --color-control-disabled: rgba(255, 255, 255, 0.04);
   --color-text-disabled: rgba(203, 213, 225, 0.55);
   --color-overlay-strong: rgba(16, 21, 34, 0.8);
+  --color-focus-ring: rgba(129, 140, 248, 0.35);
+  --color-danger-focus-ring: rgba(239, 68, 68, 0.35);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -59,6 +61,11 @@
   --touch-target-min: 44px;
   --game-card-min-width: 270px;
   --icon-tile-size: 50px;
+  --checkbox-size: 22px;
+  --checkbox-check-size: 14px;
+  --checkbox-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23101522' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m3 8 3 3 7-7'/%3E%3C/svg%3E");
+  --focus-ring-width: 3px;
+  --disabled-opacity: 0.7;
 
   --breakpoint-phone: 520px;
   --breakpoint-tablet: 768px;

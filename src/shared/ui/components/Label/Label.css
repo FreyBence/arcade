@@ -1,0 +1,9 @@
+.form-label {
+  color: var(--color-text-primary);
+  font: var(--type-small);
+  font-weight: var(--font-weight-bold);
+}
+
+.form-field[data-disabled] .form-label {
+  color: var(--color-text-disabled);
+}
