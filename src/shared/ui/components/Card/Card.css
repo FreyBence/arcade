@@ -1,0 +1,33 @@
+.card {
+  display: block;
+  padding: var(--space-5);
+  color: var(--color-text-primary);
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.card--interactive {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  text-align: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+}
+
+.card--interactive:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-default);
+  transform: translateY(var(--motion-lift-distance));
+}
+
+.card--interactive:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--interactive:hover:not(:disabled) {
+    transform: none;
+  }
+}
