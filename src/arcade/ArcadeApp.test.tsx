@@ -61,9 +61,9 @@ const appCases = [
     expected: { catalogueVisible: true, gameVisible: false, loadingVisible: false, stops: 1, destroys: 0 },
   },
   {
-    name: 'returns to the catalogue when a game cannot start',
+    name: 'shows the shared error state when a game cannot start',
     input: { action: 'start-error' as const },
-    expected: { catalogueVisible: true, gameVisible: false, loadingVisible: false, stops: 0, destroys: 0 },
+    expected: { catalogueVisible: false, gameVisible: true, loadingVisible: false, stops: 0, destroys: 0, errorVisible: true },
   },
   {
     name: 'destroys the runtime when unmounted',
@@ -125,6 +125,7 @@ describe('ArcadeApp behavior', () => {
       destroys: mocks.destroy.mock.calls.length,
       ...('fullscreenToggles' in expected ? { fullscreenToggles: mocks.toggleFullscreen.mock.calls.length } : {}),
       ...('exitFullscreenVisible' in expected ? { exitFullscreenVisible: screen.queryByRole('button', { name: 'Exit fullscreen' }) !== null } : {}),
+      ...('errorVisible' in expected ? { errorVisible: screen.queryByRole('alert') !== null } : {}),
     }).toEqual(expected)
   })
 })

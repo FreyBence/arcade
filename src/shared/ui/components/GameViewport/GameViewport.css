@@ -1,0 +1,22 @@
+.game-viewport { display: none; }
+.game-viewport--active {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: var(--content-max-width);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-default);
+}
+.game-viewport canvas { display: block; }
+.game-viewport:fullscreen {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+}

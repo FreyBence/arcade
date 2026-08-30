@@ -1,0 +1,24 @@
+.game-host-state {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--color-text-secondary);
+  text-align: center;
+  background: var(--color-surface-default);
+}
+.game-host-state--error { color: var(--color-text-primary); }
+.game-host-state__spinner {
+  width: var(--space-5);
+  height: var(--space-5);
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-accent-primary);
+  border-radius: var(--radius-full);
+  animation: game-host-state-spin 800ms linear infinite;
+}
+@keyframes game-host-state-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .game-host-state__spinner { animation: none; } }
