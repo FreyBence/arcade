@@ -3,6 +3,7 @@ import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import type { GameDefinition } from './types'
 import { appConfig } from '../config'
+import { Button, IconButton } from '../shared/ui'
 
 export function ArcadeApp() {
   const gameHostRef = useRef<HTMLDivElement>(null)
@@ -48,10 +49,10 @@ export function ArcadeApp() {
   return (
     <main className="arcade-app">
       <header className="app-header">
-        <button className="brand" onClick={returnToArcade} aria-label="Return to arcade home">
+        <Button variant="ghost" className="brand" onClick={returnToArcade} aria-label="Return to arcade home">
           {appConfig.name}
-        </button>
-        {activeGame && <button onClick={returnToArcade}>Exit game</button>}
+        </Button>
+        {activeGame && <Button variant="ghost" onClick={returnToArcade}>Exit game</Button>}
       </header>
 
       {activeGame && (
@@ -65,9 +66,9 @@ export function ArcadeApp() {
       )}
       <div ref={gameHostRef} className={activeGame ? 'game-host game-host-active' : 'game-host'}>
         {activeGame && (
-          <button className="fullscreen-button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>
-            {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          </button>
+          <IconButton className="fullscreen-button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>
+            <span aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span>
+          </IconButton>
         )}
       </div>
       {!activeGame && (

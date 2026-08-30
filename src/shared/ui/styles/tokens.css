@@ -10,10 +10,20 @@
   --color-text-accent: #a5b4fc;
   --color-text-on-accent: #101522;
   --color-accent-primary: #818cf8;
+  --color-accent-primary-hover: #a5b4fc;
+  --color-accent-primary-active: #c7d2fe;
+  --color-danger-primary: #ef4444;
+  --color-danger-hover: #f87171;
+  --color-danger-active: #fca5a5;
+  --color-text-on-danger: #ffffff;
   --color-border-subtle: rgba(255, 255, 255, 0.08);
   --color-border-default: rgba(255, 255, 255, 0.12);
   --color-border-strong: rgba(255, 255, 255, 0.2);
   --color-control-subtle: rgba(255, 255, 255, 0.07);
+  --color-control-subtle-hover: rgba(255, 255, 255, 0.12);
+  --color-control-subtle-active: rgba(255, 255, 255, 0.18);
+  --color-control-disabled: rgba(255, 255, 255, 0.04);
+  --color-text-disabled: rgba(203, 213, 225, 0.55);
   --color-overlay-strong: rgba(16, 21, 34, 0.8);
 
   --space-1: 0.25rem;

@@ -1,0 +1,5 @@
+@import '../Button/Button.css';
+
+.icon-button { flex: 0 0 auto; padding: 0; }
+.icon-button--small, .icon-button--medium { width: var(--touch-target-min); }
+.icon-button--large { width: calc(var(--touch-target-min) + var(--space-2)); min-height: calc(var(--touch-target-min) + var(--space-2)); }
