@@ -19,10 +19,12 @@ export function ArcadeApp() {
   }, [])
 
   async function play(definition: GameDefinition) {
+    setActiveGame(definition)
     setIsLoading(true)
     try {
       await managerRef.current?.start(definition)
-      setActiveGame(definition)
+    } catch {
+      setActiveGame(null)
     } finally {
       setIsLoading(false)
     }
