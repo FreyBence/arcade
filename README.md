@@ -2,13 +2,44 @@
 
 Browser-first arcade shell based on the architecture plan in `docs/`.
 
+## Requirements
+
+- Node.js `^20.19.0`, `^22.13.0`, or `>=24`
+- npm, included with Node.js
+- Docker with Docker Compose, only when working with the local PostgreSQL database
+
+Docker is optional for frontend-only development.
+
 ## Run locally
 
-Install a current Node.js LTS release, then run:
+Install a supported Node.js release, then run:
 
 ```bash
 npm install
 npm run dev
+```
+
+## Code quality
+
+Run ESLint before submitting changes:
+
+```bash
+npm run lint
+```
+
+The lint configuration uses type-aware TypeScript checks together with the recommended React Hooks and Vite React Refresh rules. Warnings fail the command, and unused ESLint suppression comments are reported as errors.
+
+ESLint can automatically apply safe fixes where supported:
+
+```bash
+npm run lint:fix
+```
+
+Before opening a pull request, verify both linting and the production build:
+
+```bash
+npm run lint
+npm run build
 ```
 
 ## Local database
@@ -42,5 +73,3 @@ Create `src/games/<game-id>/index.ts` exporting `createScene`, then add a metada
   load: () => import('../games/my-game'),
 }
 ```
-
-Each scene should clean up its own timers, listeners, and game-specific resources during Phaser's normal shutdown/destroy lifecycle.
