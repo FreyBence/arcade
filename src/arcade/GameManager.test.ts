@@ -35,6 +35,29 @@ function definition(key: string) {
   return { gameDefinition, load, createScene }
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve
+  })
+  return { promise, resolve }
+}
+
+function deferredDefinition(key: string) {
+  const scene = { sys: { settings: { key } } } as Phaser.Scene
+  const createScene = vi.fn(() => scene)
+  const loadResult = deferred<{ createScene: () => Phaser.Scene }>()
+  const load = vi.fn(() => loadResult.promise)
+  const gameDefinition: GameDefinition = {
+    id: key,
+    title: key,
+    description: '',
+    icon: '',
+    load,
+  }
+  return { gameDefinition, createScene, resolveLoad: () => loadResult.resolve({ createScene }) }
+}
+
 const managerCases = [
   {
     name: 'creates only one long-lived runtime',
@@ -68,6 +91,24 @@ const startErrorCases = [
     name: 'requires initialization before starting a game',
     input: { initialized: false, sceneKey: 'game' },
     expected: { error: 'GameManager must be initialized before starting a game.' },
+  },
+]
+
+const pendingStartCases = [
+  {
+    name: 'ignores an older start that resolves after a newer start',
+    input: { operation: 'newer-start' as const },
+    expected: { createdSceneKeys: ['second'], addedSceneKeys: ['second'], destroys: 0 },
+  },
+  {
+    name: 'ignores a start that resolves after stopping',
+    input: { operation: 'stop' as const },
+    expected: { createdSceneKeys: [], addedSceneKeys: [], destroys: 0 },
+  },
+  {
+    name: 'ignores a start that resolves after destroying',
+    input: { operation: 'destroy' as const },
+    expected: { createdSceneKeys: [], addedSceneKeys: [], destroys: 1 },
   },
 ]
 
@@ -119,5 +160,36 @@ describe('GameManager lifecycle', () => {
     const manager = new GameManager()
     if (input.initialized) manager.initialize(document.createElement('div'))
     await expect(manager.start(definition(input.sceneKey).gameDefinition)).rejects.toThrow(expected.error)
+  })
+
+  it.each(pendingStartCases)('$name', async ({ input, expected }) => {
+    const manager = new GameManager()
+    const first = deferredDefinition('first')
+    const second = deferredDefinition('second')
+    manager.initialize(document.createElement('div'))
+
+    const firstStart = manager.start(first.gameDefinition)
+    let secondStart: Promise<void> | undefined
+
+    if (input.operation === 'newer-start') {
+      secondStart = manager.start(second.gameDefinition)
+      second.resolveLoad()
+      await secondStart
+    } else if (input.operation === 'stop') {
+      manager.stop()
+    } else {
+      manager.destroy()
+    }
+
+    first.resolveLoad()
+    await firstStart
+
+    expect({
+      createdSceneKeys: [first, second]
+        .filter((fixture) => fixture.createScene.mock.calls.length > 0)
+        .map((fixture) => fixture.gameDefinition.id),
+      addedSceneKeys: phaser.sceneManager.add.mock.calls.map(([key]) => String(key)),
+      destroys: phaser.destroy.mock.calls.length,
+    }).toEqual(expected)
   })
 })
