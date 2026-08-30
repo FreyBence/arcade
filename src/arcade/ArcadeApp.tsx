@@ -28,18 +28,18 @@ export function ArcadeApp() {
     }
   }
 
-  async function returnToArcade() {
-    await managerRef.current?.stop()
+  function returnToArcade() {
+    managerRef.current?.stop()
     setActiveGame(null)
   }
 
   return (
     <main className="arcade-app">
       <header className="app-header">
-        <button className="brand" onClick={() => void returnToArcade()} aria-label="Return to arcade home">
+        <button className="brand" onClick={returnToArcade} aria-label="Return to arcade home">
           {appConfig.name}
         </button>
-        {activeGame && <button onClick={() => void returnToArcade()}>Exit game</button>}
+        {activeGame && <button onClick={returnToArcade}>Exit game</button>}
       </header>
 
       {activeGame && (

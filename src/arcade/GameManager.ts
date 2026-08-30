@@ -25,7 +25,7 @@ export class GameManager {
 
   async start(definition: GameDefinition) {
     if (!this.game) throw new Error('GameManager must be initialized before starting a game.')
-    await this.stop()
+    this.stop()
 
     const module = await definition.load()
     const scene = module.createScene()
@@ -33,7 +33,7 @@ export class GameManager {
     this.game.scene.add(this.activeSceneKey, scene, true)
   }
 
-  async stop() {
+  stop() {
     if (!this.game || !this.activeSceneKey) return
 
     const scene = this.game.scene.getScene(this.activeSceneKey)
@@ -43,7 +43,7 @@ export class GameManager {
   }
 
   destroy() {
-    void this.stop()
+    this.stop()
     this.game?.destroy(true)
     this.game = undefined
   }
