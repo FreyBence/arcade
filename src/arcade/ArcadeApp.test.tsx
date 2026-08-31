@@ -75,6 +75,11 @@ const appCases = [
     input: { action: 'fullscreen' as const },
     expected: { catalogueVisible: false, gameVisible: true, loadingVisible: false, stops: 0, destroys: 0, fullscreenToggles: 1, exitFullscreenVisible: true },
   },
+  {
+    name: 'opens registration from the main header',
+    input: { action: 'register' as const },
+    expected: { catalogueVisible: false, gameVisible: false, loadingVisible: false, stops: 0, destroys: 0, registrationVisible: true },
+  },
 ]
 
 describe('ArcadeApp behavior', () => {
@@ -118,6 +123,9 @@ describe('ArcadeApp behavior', () => {
     if (input.action === 'fullscreen') {
       await user.click(screen.getByRole('button', { name: 'Enter fullscreen' }))
     }
+    if (input.action === 'register') {
+      await user.click(screen.getByRole('button', { name: 'Create account' }))
+    }
 
     expect({
       catalogueVisible: screen.queryByRole('heading', { name: 'Your pocket arcade' }) !== null,
@@ -128,6 +136,7 @@ describe('ArcadeApp behavior', () => {
       ...('fullscreenToggles' in expected ? { fullscreenToggles: mocks.toggleFullscreen.mock.calls.length } : {}),
       ...('exitFullscreenVisible' in expected ? { exitFullscreenVisible: screen.queryByRole('button', { name: 'Exit fullscreen' }) !== null } : {}),
       ...('errorVisible' in expected ? { errorVisible: screen.queryByRole('alert') !== null } : {}),
+      ...('registrationVisible' in expected ? { registrationVisible: screen.queryByRole('heading', { name: 'Join the arcade' }) !== null } : {}),
     }).toEqual(expected)
   })
 })

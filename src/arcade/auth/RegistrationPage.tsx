@@ -34,9 +34,10 @@ function readFormValue(form: FormData, name: string): string {
 export interface RegistrationPageProps {
   client: RegistrationClient
   onCancel?: () => void
+  onSuccess?: () => void
 }
 
-export function RegistrationPage({ client, onCancel }: RegistrationPageProps) {
+export function RegistrationPage({ client, onCancel, onSuccess }: RegistrationPageProps) {
   const identity = useClientIdentity()
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submissionError, setSubmissionError] = useState<string | null>(null)
@@ -58,6 +59,7 @@ export function RegistrationPage({ client, onCancel }: RegistrationPageProps) {
     setIsSubmitting(true)
     try {
       identity.login(await client.register(input))
+      onSuccess?.()
     } catch (error) {
       setSubmissionError(registrationErrorMessage(error))
     } finally {
