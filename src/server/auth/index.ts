@@ -15,3 +15,18 @@ export { registerUser } from './registrationService'
 export type { RegistrationDependencies } from './registrationService'
 export type { NewUserRecord, PasswordHasher, RegistrationInput, SafeUser, UserRepository } from './registrationTypes'
 export { parseRegistrationInput } from './registrationValidation'
+export {
+  getAuthenticationSessionState,
+  hashRefreshToken,
+  PrismaSessionRepository,
+  revokeAuthenticationSession,
+  startAuthenticationSession,
+} from './session'
+export type {
+  AuthenticationSession,
+  AuthenticationSessionRepository,
+  AuthenticationSessionState,
+  NewAuthenticationSession,
+  StartAuthenticationSessionInput,
+  StoredAuthenticationSession,
+} from './session'
