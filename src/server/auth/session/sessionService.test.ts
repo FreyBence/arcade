@@ -17,11 +17,15 @@ function createRepository() {
     void session
     return Promise.resolve(persistedSession)
   })
+  const findByRefreshTokenHash = vi.fn((refreshTokenHash: string) => {
+    void refreshTokenHash
+    return Promise.resolve(null)
+  })
   const revoke = vi.fn((id: string, revokedAt: Date) => {
     void id
     return Promise.resolve({ ...persistedSession, revokedAt })
   })
-  const repository: AuthenticationSessionRepository = { create, revoke }
+  const repository: AuthenticationSessionRepository = { create, findByRefreshTokenHash, revoke }
 
   return { create, repository, revoke }
 }

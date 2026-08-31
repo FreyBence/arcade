@@ -1,5 +1,5 @@
 import type { PrismaClient } from '../../../../generated/prisma/client'
-import type { AuthenticationSession, AuthenticationSessionRepository, NewAuthenticationSession } from './sessionTypes'
+import type { AuthenticationSession, AuthenticationSessionRepository, NewAuthenticationSession, RefreshableAuthenticationSession } from './sessionTypes'
 
 const SESSION_SELECTION = {
   id: true,
@@ -14,6 +14,17 @@ export class PrismaSessionRepository implements AuthenticationSessionRepository 
 
   create(session: NewAuthenticationSession): Promise<AuthenticationSession> {
     return this.prisma.session.create({ data: session, select: SESSION_SELECTION })
+  }
+
+  async findByRefreshTokenHash(refreshTokenHash: string): Promise<RefreshableAuthenticationSession | null> {
+    const session = await this.prisma.session.findUnique({
+      where: { refreshTokenHash },
+      select: { ...SESSION_SELECTION, user: { select: { role: true } } },
+    })
+    if (!session) return null
+
+    const { user, ...authenticationSession } = session
+    return { ...authenticationSession, userRole: user.role }
   }
 
   revoke(id: string, revokedAt: Date): Promise<AuthenticationSession> {

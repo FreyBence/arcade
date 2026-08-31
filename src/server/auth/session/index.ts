@@ -8,5 +8,6 @@ export type {
   AuthenticationSessionRepository,
   AuthenticationSessionState,
   NewAuthenticationSession,
+  RefreshableAuthenticationSession,
   StoredAuthenticationSession,
 } from './sessionTypes'

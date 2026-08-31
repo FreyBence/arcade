@@ -20,5 +20,11 @@ export interface NewAuthenticationSession {
 
 export interface AuthenticationSessionRepository {
   create(session: NewAuthenticationSession): Promise<AuthenticationSession>
+  findByRefreshTokenHash(refreshTokenHash: string): Promise<RefreshableAuthenticationSession | null>
   revoke(id: string, revokedAt: Date): Promise<AuthenticationSession>
 }
+
+export interface RefreshableAuthenticationSession extends AuthenticationSession {
+  userRole: UserRole
+}
+import type { UserRole } from '../../../shared/auth'
