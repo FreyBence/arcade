@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { appConfig } from '../config'
-import { ClientIdentityProvider, createClientIdentityStore, createLocalGuestIdentityStore } from '../shared/identity'
-import { AppHeader, AppHeaderAction, AppShell, FullscreenButton, GameCatalogue, GameErrorState, GameLoadingState, GamePageHeader, GameViewport, PageContainer, PageIntro } from '../shared/ui'
+import { ClientIdentityProvider, createBrowserClientIdentitySession, createClientIdentityStore, createLocalGuestIdentityStore, useClientIdentity } from '../shared/identity'
+import { AppHeader, AppHeaderAction, AppShell, FullscreenButton, GameCatalogue, GameErrorState, GameLoadingState, GamePageHeader, GameViewport, PageContainer, PageIntro, ToastProvider, useToast } from '../shared/ui'
 import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import { LoginPage, RegistrationPage, createBrowserLoginClient, createBrowserRegistrationClient } from './auth'
@@ -9,14 +9,16 @@ import type { GameDefinition } from './types'
 
 export function ArcadeApp() {
   const [identityStore] = useState(() => createClientIdentityStore({
-    session: { restore: () => Promise.resolve(null), logout: () => Promise.resolve() },
+    session: createBrowserClientIdentitySession(),
     guestStore: createLocalGuestIdentityStore(),
   }))
 
-  return <ClientIdentityProvider store={identityStore}><ArcadeContent /></ClientIdentityProvider>
+  return <ClientIdentityProvider store={identityStore}><ToastProvider><ArcadeContent /></ToastProvider></ClientIdentityProvider>
 }
 
 function ArcadeContent() {
+  const identity = useClientIdentity()
+  const { showToast } = useToast()
   const gameHostRef = useRef<HTMLDivElement>(null)
   const managerRef = useRef<GameManager | null>(null)
   const [activeGame, setActiveGame] = useState<GameDefinition | null>(null)
@@ -25,6 +27,7 @@ function ArcadeContent() {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showRegistration, setShowRegistration] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [registrationClient] = useState(createBrowserRegistrationClient)
   const [loginClient] = useState(createBrowserLoginClient)
 
@@ -54,9 +57,23 @@ function ArcadeContent() {
     setShowLogin(false)
   }
 
+  async function logout() {
+    setIsLoggingOut(true)
+    try {
+      await identity.logout()
+      returnToArcade()
+    } catch {
+      showToast({ message: 'Sign out failed. Please try again.', variant: 'error' })
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
   const headerAction = activeGame
     ? <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
-    : showRegistration || showLogin
+    : identity.state.status === 'authenticated'
+      ? <AppHeaderAction onClick={() => void logout()} icon="←" label="Sign out" isLoading={isLoggingOut} loadingLabel="Signing out" />
+      : showRegistration || showLogin
       ? <AppHeaderAction onClick={returnToArcade} icon="←" label="Back to arcade" collapseOnSmall />
       : <>
           <AppHeaderAction onClick={() => setShowLogin(true)} icon="→" label="Sign in" />

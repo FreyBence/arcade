@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { deferred } from '../test/testUtils'
 
 const mocks = vi.hoisted(() => ({
@@ -38,6 +38,8 @@ vi.mock('./GameRegistry', () => ({
 }))
 
 import { ArcadeApp } from './ArcadeApp'
+
+afterEach(() => vi.unstubAllGlobals())
 
 const appCases = [
   {
@@ -146,6 +148,50 @@ describe('ArcadeApp behavior', () => {
       ...('errorVisible' in expected ? { errorVisible: screen.queryByRole('alert') !== null } : {}),
       ...('registrationVisible' in expected ? { registrationVisible: screen.queryByRole('heading', { name: 'Join the arcade' }) !== null } : {}),
       ...('loginVisible' in expected ? { loginVisible: screen.queryByRole('heading', { name: 'Sign in to the arcade' }) !== null } : {}),
+    }).toEqual(expected)
+  })
+})
+
+const USER = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12 } as const
+const logoutCases = [
+  {
+    name: 'signs an authenticated user out and restores guest actions',
+    input: { logoutStatus: 200 },
+    expected: { paths: ['/api/login', '/api/logout'], signOutVisible: false, signInVisible: true, error: undefined },
+  },
+  {
+    name: 'keeps authenticated UI available when logout fails',
+    input: { logoutStatus: 503 },
+    expected: { paths: ['/api/login', '/api/logout'], signOutVisible: true, signInVisible: false, error: 'Sign out failed. Please try again.' },
+  },
+]
+
+describe('ArcadeApp logout behavior', () => {
+  it.each(logoutCases)('$name', async ({ input, expected }) => {
+    const paths: string[] = []
+    vi.stubGlobal('fetch', vi.fn((path: string | URL | Request) => {
+      const requestPath = typeof path === 'string' ? path : path instanceof URL ? path.href : path.url
+      paths.push(requestPath)
+      return Promise.resolve(requestPath === '/api/login'
+        ? Response.json({ user: USER, accessToken: 'private-token' })
+        : new Response(null, { status: input.logoutStatus }))
+    }))
+    const user = userEvent.setup()
+    render(<ArcadeApp />)
+
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await user.type(screen.getByLabelText('Email'), USER.email)
+    await user.type(screen.getByLabelText('Password'), 'safe-password')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await user.click(await screen.findByRole('button', { name: 'Sign out' }))
+
+    if (expected.error) expect(await screen.findByRole('alert')).toHaveTextContent(expected.error)
+    else await screen.findByRole('button', { name: 'Sign in' })
+    expect({
+      paths,
+      signOutVisible: screen.queryByRole('button', { name: 'Sign out' }) !== null,
+      signInVisible: screen.queryByRole('button', { name: 'Sign in' }) !== null,
+      error: expected.error,
     }).toEqual(expected)
   })
 })

@@ -49,8 +49,18 @@ const transitionCases = [
   },
   {
     name: 'moves from authenticated to the same persisted guest after logout',
-    input: { transition: 'logout' as const },
+    input: { transition: 'logout' as const, logoutFails: false, storedGuestId: GUEST_ID },
     expected: { status: 'guest', guestId: GUEST_ID },
+  },
+  {
+    name: 'generates a guest identity after logout when none is stored',
+    input: { transition: 'logout' as const, logoutFails: false, storedGuestId: null },
+    expected: { status: 'guest', guestId: GUEST_ID },
+  },
+  {
+    name: 'remains authenticated when server logout fails',
+    input: { transition: 'logout' as const, logoutFails: true, storedGuestId: GUEST_ID },
+    expected: { status: 'authenticated', user: USER },
   },
 ]
 
@@ -66,10 +76,15 @@ describe('client identity store', () => {
   })
 
   it.each(transitionCases)('$name', async ({ input, expected }) => {
-    const { store, logout } = createDependencies(input.transition === 'logout' ? USER : null)
+    const { store, logout } = createDependencies(
+      input.transition === 'logout' ? USER : null,
+      'storedGuestId' in input ? input.storedGuestId : GUEST_ID,
+    )
+    if ('logoutFails' in input && input.logoutFails) logout.mockRejectedValue(new Error('unavailable'))
     await store.initialize()
 
     if (input.transition === 'login') store.login(USER)
+    else if ('logoutFails' in input && input.logoutFails) await expect(store.logout()).rejects.toThrow('unavailable')
     else await store.logout()
 
     expect(store.getState()).toEqual(expected)
