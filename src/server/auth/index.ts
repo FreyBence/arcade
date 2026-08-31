@@ -43,9 +43,11 @@ export {
   createRefreshHandler,
   createRefreshService,
   createAuthenticationApi,
+  createLogoutHandler,
   InvalidRefreshSessionError,
   readRefreshConfig,
   readRefreshCookie,
+  serializeClearedRefreshCookie,
   serializeRefreshCookie,
 } from './refresh'
 export type {

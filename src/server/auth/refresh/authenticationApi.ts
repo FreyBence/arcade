@@ -4,6 +4,7 @@ import { createLoginHandler } from '../loginHandler'
 import { verifyPassword } from '../passwordService'
 import { PrismaUserRepository } from '../prismaUserRepository'
 import { PrismaSessionRepository } from '../session'
+import { createLogoutHandler } from './logoutHandler'
 import type { RefreshConfig } from './refreshConfig'
 import { createRefreshHandler } from './refreshHandler'
 import { createRefreshService } from './refreshService'
@@ -27,6 +28,7 @@ export function createAuthenticationApi(
       users: new PrismaUserRepository(prisma),
       verifyPassword,
     }),
+    logout: createLogoutHandler(refreshConfig, refreshService),
     refresh: createRefreshHandler(refreshConfig, refreshService),
     close: () => prisma.$disconnect(),
   }
