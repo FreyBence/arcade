@@ -1,5 +1,6 @@
 import { createPrismaClient } from '../../database/prisma'
 import { createAccessTokenService, type AccessTokenConfig } from '../accessToken'
+import { protectAdminEndpoint } from '../authorization'
 import { createLoginHandler } from '../loginHandler'
 import { verifyPassword } from '../passwordService'
 import { PrismaUserRepository } from '../prismaUserRepository'
@@ -23,8 +24,10 @@ export function createAuthenticationApi(
     accessTokens,
   )
 
+  const authenticator = createRequestAuthenticator(accessTokens)
+
   return {
-    authenticate: createRequestAuthenticator(accessTokens),
+    authenticate: authenticator,
     login: createLoginHandler({
       startSession: (user) => refreshService.start(user),
       users: new PrismaUserRepository(prisma),
@@ -32,6 +35,7 @@ export function createAuthenticationApi(
     }),
     logout: createLogoutHandler(refreshConfig, refreshService),
     refresh: createRefreshHandler(refreshConfig, refreshService),
+    protectAdmin: (handler: Parameters<typeof protectAdminEndpoint>[1]) => protectAdminEndpoint(authenticator, handler),
     close: () => prisma.$disconnect(),
   }
 }

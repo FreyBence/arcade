@@ -1,6 +1,7 @@
 export { PASSWORD_HASH_OPTIONS } from './constants'
 export {
   requireAnyRole,
+  protectAdminEndpoint,
   RoleAuthorizationError,
   withAuthenticationAndRoles,
   withRoleAuthorization,
