@@ -1,4 +1,5 @@
 import { Prisma, type PrismaClient } from '../../../generated/prisma/client'
+import type { AuthenticationUserRepository, CredentialUser } from './loginTypes'
 import { DuplicateEmailError } from './registrationErrors'
 import type { NewUserRecord, SafeUser, UserRepository } from './registrationTypes'
 
@@ -12,12 +13,19 @@ const SAFE_USER_SELECTION = {
   updatedAt: true,
 } as const
 
-export class PrismaUserRepository implements UserRepository {
+export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findIdByEmail(email: string): Promise<string | null> {
     const user = await this.prisma.user.findUnique({ where: { email }, select: { id: true } })
     return user?.id ?? null
+  }
+
+  async findForAuthentication(email: string): Promise<CredentialUser | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: { ...SAFE_USER_SELECTION, passwordHash: true },
+    })
   }
 
   async create(user: NewUserRecord): Promise<SafeUser> {
