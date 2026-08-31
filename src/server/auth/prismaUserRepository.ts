@@ -29,6 +29,10 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
     })
   }
 
+  findSafeById(id: string): Promise<SafeUser | null> {
+    return this.prisma.user.findUnique({ where: { id }, select: SAFE_USER_SELECTION })
+  }
+
   async create(user: NewUserRecord): Promise<SafeUser> {
     try {
       return await this.prisma.user.create({ data: user, select: SAFE_USER_SELECTION })
