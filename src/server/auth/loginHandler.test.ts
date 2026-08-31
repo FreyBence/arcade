@@ -20,6 +20,7 @@ const credentialUser: CredentialUser = {
 
 interface SuccessBody {
   user: Record<string, unknown>
+  accessToken: string
 }
 
 interface ErrorBody {
@@ -46,7 +47,7 @@ function createDependencies(user: CredentialUser | null, passwordMatches: boolea
   })
   const startSession = vi.fn((authenticatedUser: SafeUser) => {
     void authenticatedUser
-    return Promise.resolve()
+    return Promise.resolve({ accessToken: 'short-lived-access-token', refreshCookie: '__Host-arcade_refresh=opaque; HttpOnly; Secure' })
   })
 
   return {
@@ -63,6 +64,8 @@ const successfulLoginCases = [
     input: { email: ' Player@Example.COM ', password: 'correct-password' },
     expected: {
       status: 200,
+      accessToken: 'short-lived-access-token',
+      refreshCookie: '__Host-arcade_refresh=opaque; HttpOnly; Secure',
       lookup: 'player@example.com',
       verification: ['correct-password', '$argon2id$stored-password-hash'],
       user: {
@@ -104,10 +107,12 @@ describe('login API', () => {
     const body = await response.json() as SuccessBody
 
     expect(response.status).toBe(expected.status)
+    expect(response.headers.get('set-cookie')).toBe(expected.refreshCookie)
     expect(findForAuthentication.mock.calls[0]?.[0]).toBe(expected.lookup)
     expect(verifyPassword.mock.calls[0]).toEqual(expected.verification)
     expect(startSession).toHaveBeenCalledWith(safeUser)
     expect(body.user).toEqual(expected.user)
+    expect(body.accessToken).toBe(expected.accessToken)
     expect(body.user).not.toHaveProperty('passwordHash')
   })
 

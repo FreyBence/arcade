@@ -12,8 +12,10 @@ export function createLoginHandler(dependencies: LoginDependencies) {
     }
 
     try {
-      const user = await loginUser(requestBody, dependencies)
-      return jsonResponse({ user }, 200)
+      const { user, accessToken, refreshCookie } = await loginUser(requestBody, dependencies)
+      const response = jsonResponse({ user, accessToken }, 200)
+      response.headers.set('set-cookie', refreshCookie)
+      return response
     } catch (error) {
       if (error instanceof LoginError) {
         const status = error.code === 'INVALID_CREDENTIALS' ? 401 : 400

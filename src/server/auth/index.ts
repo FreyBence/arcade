@@ -13,7 +13,7 @@ export { LoginError } from './loginErrors'
 export { createLoginHandler } from './loginHandler'
 export { loginUser } from './loginService'
 export type { LoginDependencies } from './loginService'
-export type { AuthenticationUserRepository, CredentialUser, LoginInput, PasswordVerifier, SessionStarter } from './loginTypes'
+export type { AuthenticationUserRepository, CredentialUser, LoginInput, LoginResult, PasswordVerifier, SessionStarter } from './loginTypes'
 export { parseLoginInput } from './loginValidation'
 export { createRegistrationHandler } from './registrationHandler'
 export { createRegistrationApi } from './registrationApi'
@@ -35,6 +35,23 @@ export type {
   AuthenticationSessionRepository,
   AuthenticationSessionState,
   NewAuthenticationSession,
+  RefreshableAuthenticationSession,
   StartAuthenticationSessionInput,
   StoredAuthenticationSession,
 } from './session'
+export {
+  createRefreshHandler,
+  createRefreshService,
+  createAuthenticationApi,
+  InvalidRefreshSessionError,
+  readRefreshConfig,
+  readRefreshCookie,
+  serializeRefreshCookie,
+} from './refresh'
+export type {
+  AccessTokenIssuer,
+  RefreshClock,
+  RefreshConfig,
+  RefreshTokenGenerator,
+  StartedRefreshSession,
+} from './refresh'

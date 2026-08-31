@@ -1,6 +1,6 @@
 import { UNKNOWN_USER_PASSWORD_HASH } from './constants'
 import { invalidCredentials } from './loginErrors'
-import type { AuthenticationUserRepository, PasswordVerifier, SessionStarter } from './loginTypes'
+import type { AuthenticationUserRepository, LoginResult, PasswordVerifier, SessionStarter } from './loginTypes'
 import { parseLoginInput } from './loginValidation'
 import type { SafeUser } from './registrationTypes'
 
@@ -10,7 +10,7 @@ export interface LoginDependencies {
   verifyPassword: PasswordVerifier
 }
 
-export async function loginUser(input: unknown, dependencies: LoginDependencies): Promise<SafeUser> {
+export async function loginUser(input: unknown, dependencies: LoginDependencies): Promise<LoginResult> {
   const login = parseLoginInput(input)
   const credentialUser = await dependencies.users.findForAuthentication(login.email)
   const passwordMatches = await dependencies.verifyPassword(
@@ -29,6 +29,6 @@ export async function loginUser(input: unknown, dependencies: LoginDependencies)
     createdAt: credentialUser.createdAt,
     updatedAt: credentialUser.updatedAt,
   }
-  await dependencies.startSession(safeUser)
-  return safeUser
+  const session = await dependencies.startSession(safeUser)
+  return { user: safeUser, ...session }
 }

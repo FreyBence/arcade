@@ -1,4 +1,5 @@
 import type { SafeUser } from './registrationTypes'
+import type { StartedRefreshSession } from './refresh'
 
 export interface LoginInput {
   email: string
@@ -18,5 +19,9 @@ export interface PasswordVerifier {
 }
 
 export interface SessionStarter {
-  (user: SafeUser): Promise<void>
+  (user: SafeUser): Promise<StartedRefreshSession>
+}
+
+export interface LoginResult extends StartedRefreshSession {
+  user: SafeUser
 }
