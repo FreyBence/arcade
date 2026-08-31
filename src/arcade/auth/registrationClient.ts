@@ -1,4 +1,5 @@
 import type { ClientIdentityUser } from '../../shared/identity'
+import { setAccessToken } from '../../shared/identity'
 
 export interface RegistrationFormInput {
   name: string
@@ -18,7 +19,7 @@ export class RegistrationClientError extends Error {
 }
 
 interface ErrorBody { error?: { code?: unknown } }
-interface UserBody { user?: ClientIdentityUser }
+interface UserBody { accessToken?: unknown; user?: ClientIdentityUser }
 
 async function readBody(response: Response): Promise<ErrorBody & UserBody> {
   try {
@@ -49,9 +50,10 @@ export function createBrowserRegistrationClient(fetcher: typeof fetch = fetch): 
         body: JSON.stringify({ email: input.email, password: input.password }),
       })
       const loginBody = await readBody(loginResponse)
-      if (!loginResponse.ok || !loginBody.user) throw new RegistrationClientError('UNAVAILABLE')
+      if (!loginResponse.ok || !loginBody.user || typeof loginBody.accessToken !== 'string') throw new RegistrationClientError('UNAVAILABLE')
 
       const { id, name, email, role, dinoCoins } = loginBody.user
+      setAccessToken(loginBody.accessToken)
       return { id, name, email, role, dinoCoins }
     },
   }

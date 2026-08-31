@@ -157,12 +157,12 @@ const logoutCases = [
   {
     name: 'signs an authenticated user out and restores guest actions',
     input: { logoutStatus: 200 },
-    expected: { paths: ['/api/login', '/api/logout'], signOutVisible: false, signInVisible: true, error: undefined },
+    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], signOutVisible: false, signInVisible: true, error: undefined },
   },
   {
     name: 'keeps authenticated UI available when logout fails',
     input: { logoutStatus: 503 },
-    expected: { paths: ['/api/login', '/api/logout'], signOutVisible: true, signInVisible: false, error: 'Sign out failed. Please try again.' },
+    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], signOutVisible: true, signInVisible: false, error: 'Sign out failed. Please try again.' },
   },
 ]
 

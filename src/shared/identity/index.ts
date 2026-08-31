@@ -14,3 +14,4 @@ export type {
   GuestIdentityStore,
   ResolvedClientIdentity,
 } from './guestIdentityTypes'
+export { createAuthenticatedFetch, getAccessToken, setAccessToken } from './accessTokenStore'

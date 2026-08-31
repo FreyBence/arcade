@@ -1,4 +1,5 @@
 import type { ClientIdentityUser } from '../../shared/identity'
+import { setAccessToken } from '../../shared/identity'
 
 export interface LoginFormInput { email: string; password: string }
 export interface LoginClient { login(input: LoginFormInput): Promise<ClientIdentityUser> }
@@ -10,7 +11,7 @@ export class LoginClientError extends Error {
   }
 }
 
-interface LoginResponseBody { error?: { code?: unknown }; user?: ClientIdentityUser }
+interface LoginResponseBody { accessToken?: unknown; error?: { code?: unknown }; user?: ClientIdentityUser }
 
 async function readBody(response: Response): Promise<LoginResponseBody> {
   try { return await response.json() as LoginResponseBody } catch { return {} }
@@ -30,8 +31,9 @@ export function createBrowserLoginClient(fetcher: typeof fetch = fetch): LoginCl
         if (code === 'INVALID_CREDENTIALS' || code === 'INVALID_REQUEST') throw new LoginClientError(code)
         throw new LoginClientError('UNAVAILABLE')
       }
-      if (!body.user) throw new LoginClientError('UNAVAILABLE')
+      if (!body.user || typeof body.accessToken !== 'string') throw new LoginClientError('UNAVAILABLE')
       const { id, name, email, role, dinoCoins } = body.user
+      setAccessToken(body.accessToken)
       return { id, name, email, role, dinoCoins }
     },
   }
