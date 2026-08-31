@@ -12,12 +12,16 @@ Docker is optional for frontend-only development.
 
 ## Run locally
 
-Install a supported Node.js release, then run:
+Install a supported Node.js release, copy `.env.example` to `.env`, start PostgreSQL, apply the migrations, and run:
 
 ```bash
 npm install
+docker compose up -d database
+npm run db:migrate
 npm run dev
 ```
+
+The development command starts PostgreSQL and waits for it to become healthy, starts the API server, and then starts Vite after the API port is available. Vite proxies `/api/*` requests to the API server. Registration and login therefore require Docker and the server-only authentication variables in `.env`. The secure `__Host-` refresh cookie works on `localhost`; deployed environments must use HTTPS.
 
 ## Code quality
 
@@ -86,6 +90,19 @@ npm run admin:bootstrap
 ```
 
 The command validates the values, hashes the password with the application password service, and creates an `ADMIN`. It is safe to repeat with the same email: an existing administrator is left unchanged. If that email belongs to a non-admin account, the command fails without changing its role or password. Do not commit real administrator credentials or expose them through `VITE_` variables.
+
+## Production deployment
+
+Build the frontend, apply pending database migrations, and start the Node application server:
+
+```bash
+npm ci
+npm run build
+npm run db:deploy
+npm start
+```
+
+The Node server exposes the authentication API and serves the built single-page application from `dist/`. Configure `DATABASE_URL`, all `ACCESS_TOKEN_*` and `REFRESH_TOKEN_*` values, and optionally `PORT` as server-only environment variables. Deploy behind HTTPS so the secure refresh cookie is accepted. The process handles `SIGINT` and `SIGTERM`, stops accepting new requests, and disconnects Prisma during shutdown.
 
 ## Architecture
 

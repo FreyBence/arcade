@@ -6,7 +6,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig(
-  globalIgnores(['dist/', 'generated/']),
+  globalIgnores(['dist/', 'dist-server/', 'generated/']),
   {
     linterOptions: {
       reportUnusedDisableDirectives: 'error',
