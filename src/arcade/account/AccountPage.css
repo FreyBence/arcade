@@ -1,0 +1,6 @@
+.account-page { display: grid; gap: var(--space-8); }
+.account-page__card { width: min(100%, var(--reading-width)); box-sizing: border-box; }
+.account-page__form { display: grid; gap: var(--space-5); }
+.account-page__error { margin: 0; padding: var(--space-3) var(--space-4); color: var(--color-danger-primary); background: var(--color-status-error-surface); border-radius: var(--radius-sm); font: var(--type-small); }
+.account-page__actions { display: flex; justify-content: flex-end; }
+@media (max-width: 520px) { .account-page__actions .button { width: 100%; } }

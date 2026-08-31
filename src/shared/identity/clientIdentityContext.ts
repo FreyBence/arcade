@@ -4,6 +4,7 @@ import type { ClientIdentityState, ClientIdentityUser } from './guestIdentityTyp
 export interface ClientIdentityContextValue {
   state: ClientIdentityState
   login(user: ClientIdentityUser): void
+  updateUser(user: ClientIdentityUser): void
   logout(): Promise<void>
 }
 

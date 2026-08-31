@@ -21,6 +21,7 @@ export function ClientIdentityProvider({ children, store }: ClientIdentityProvid
     <ClientIdentityContext value={{
       state,
       login: (user) => store.login(user),
+      updateUser: (user) => store.updateUser(user),
       logout: () => store.logout(),
     }}>
       {children}

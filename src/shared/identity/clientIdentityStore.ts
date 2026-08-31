@@ -16,6 +16,7 @@ export interface ClientIdentityStore {
   subscribe(listener: () => void): () => void
   initialize(): Promise<void>
   login(user: ClientIdentityUser): void
+  updateUser(user: ClientIdentityUser): void
   logout(): Promise<void>
 }
 
@@ -59,6 +60,9 @@ export function createClientIdentityStore({
       return initialization
     },
     login(user) {
+      setState({ status: 'authenticated', user })
+    },
+    updateUser(user) {
       setState({ status: 'authenticated', user })
     },
     async logout() {

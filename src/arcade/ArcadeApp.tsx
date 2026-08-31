@@ -6,6 +6,7 @@ import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import { LoginPage, RegistrationPage, createBrowserLoginClient, createBrowserRegistrationClient } from './auth'
 import type { GameDefinition } from './types'
+import { AccountPage, createBrowserProfileClient } from './account'
 
 export function ArcadeApp() {
   const [identityStore] = useState(() => createClientIdentityStore({
@@ -27,9 +28,11 @@ function ArcadeContent() {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showRegistration, setShowRegistration] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [showAccount, setShowAccount] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [registrationClient] = useState(createBrowserRegistrationClient)
   const [loginClient] = useState(createBrowserLoginClient)
+  const [profileClient] = useState(createBrowserProfileClient)
 
   useEffect(() => {
     const manager = new GameManager()
@@ -55,6 +58,7 @@ function ArcadeContent() {
     setLoadError(false)
     setShowRegistration(false)
     setShowLogin(false)
+    setShowAccount(false)
   }
 
   async function logout() {
@@ -72,7 +76,10 @@ function ArcadeContent() {
   const headerAction = activeGame
     ? <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
     : identity.state.status === 'authenticated'
-      ? <AppHeaderAction onClick={() => void logout()} icon="←" label="Sign out" isLoading={isLoggingOut} loadingLabel="Signing out" />
+      ? <>
+          <AppHeaderAction onClick={() => setShowAccount(true)} icon="●" label={identity.state.user.name} />
+          <AppHeaderAction onClick={() => void logout()} icon="←" label="Sign out" isLoading={isLoggingOut} loadingLabel="Signing out" />
+        </>
       : showRegistration || showLogin
       ? <AppHeaderAction onClick={returnToArcade} icon="←" label="Back to arcade" collapseOnSmall />
       : <>
@@ -90,7 +97,7 @@ function ArcadeContent() {
           {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
         </GameViewport>
       </PageContainer>
-      {!activeGame && !showRegistration && !showLogin && (
+      {!activeGame && !showRegistration && !showLogin && !showAccount && (
         <PageContainer spacing="hero">
           <PageIntro eyebrow="Choose a game" title="Your pocket arcade" description="Games load only when you select them, so the arcade stays quick and lightweight." />
           <GameCatalogue games={gameRegistry} onSelect={(game) => void play(game)} />
@@ -102,6 +109,7 @@ function ArcadeContent() {
       {showLogin && (
         <LoginPage client={loginClient} onCancel={returnToArcade} onSuccess={returnToArcade} />
       )}
+      {showAccount && identity.state.status === 'authenticated' && <AccountPage client={profileClient} />}
     </AppShell>
   )
 }
