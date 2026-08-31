@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { PASSWORD_HASH_OPTIONS } from './passwordConfig'
+import { PASSWORD_HASH_OPTIONS } from './constants'
 import { hashPassword, verifyPassword } from './passwordService'
 
 const verificationCases = [

@@ -1,4 +1,4 @@
-export { PASSWORD_HASH_OPTIONS } from './passwordConfig'
+export { PASSWORD_HASH_OPTIONS } from './constants'
 export { hashPassword, verifyPassword } from './passwordService'
 export { createLoginApi } from './loginApi'
 export { LoginError } from './loginErrors'

@@ -1,5 +1,5 @@
 import { hash, verify } from 'argon2'
-import { PASSWORD_HASH_OPTIONS } from './passwordConfig'
+import { PASSWORD_HASH_OPTIONS } from './constants'
 
 export async function hashPassword(plaintextPassword: string): Promise<string> {
   return hash(plaintextPassword, PASSWORD_HASH_OPTIONS)

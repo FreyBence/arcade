@@ -1,9 +1,6 @@
 import { LoginError } from './loginErrors'
 import { loginUser, type LoginDependencies } from './loginService'
-
-function jsonResponse(body: unknown, status: number): Response {
-  return Response.json(body, { status })
-}
+import { jsonResponse } from './utils'
 
 export function createLoginHandler(dependencies: LoginDependencies) {
   return async function handleLogin(request: Request): Promise<Response> {

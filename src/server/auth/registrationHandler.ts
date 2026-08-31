@@ -1,15 +1,12 @@
 import { RegistrationError } from './registrationErrors'
 import { registerUser, type RegistrationDependencies } from './registrationService'
+import { jsonResponse } from './utils'
 
 interface ErrorResponse {
   error: {
     code: string
     message: string
   }
-}
-
-function jsonResponse(body: unknown, status: number): Response {
-  return Response.json(body, { status })
 }
 
 export function createRegistrationHandler(dependencies: RegistrationDependencies) {

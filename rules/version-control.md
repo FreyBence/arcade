@@ -2,6 +2,12 @@
 
 Follow these rules for all branch, commit, merge, and cleanup operations.
 
+## Temp
+
+- temporarly Branch management rules should be ignored
+- work should be done on master
+- Commit management rules should be applied
+
 ## Branch management
 
 - For work tied to a GitHub issue, create the branch from the latest default branch and link it to the issue in GitHub's Development section. Prefer GitHub's linked-branch operation when authenticated access is available.
@@ -16,3 +22,4 @@ Follow these rules for all branch, commit, merge, and cleanup operations.
 ## Commit management
 
 - For work tied to a GitHub issue, format each commit message as `issue-<issue-number>: <commit-message>`.
+- For commit creation check if the uncommited changes should be separated into more commits.
