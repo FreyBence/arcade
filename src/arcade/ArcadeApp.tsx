@@ -4,7 +4,7 @@ import { ClientIdentityProvider, createClientIdentityStore, createLocalGuestIden
 import { AppHeader, AppHeaderAction, AppShell, FullscreenButton, GameCatalogue, GameErrorState, GameLoadingState, GamePageHeader, GameViewport, PageContainer, PageIntro } from '../shared/ui'
 import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
-import { RegistrationPage, createBrowserRegistrationClient } from './auth'
+import { LoginPage, RegistrationPage, createBrowserLoginClient, createBrowserRegistrationClient } from './auth'
 import type { GameDefinition } from './types'
 
 export function ArcadeApp() {
@@ -24,7 +24,9 @@ function ArcadeContent() {
   const [loadError, setLoadError] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showRegistration, setShowRegistration] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
   const [registrationClient] = useState(createBrowserRegistrationClient)
+  const [loginClient] = useState(createBrowserLoginClient)
 
   useEffect(() => {
     const manager = new GameManager()
@@ -49,13 +51,17 @@ function ArcadeContent() {
     setActiveGame(null)
     setLoadError(false)
     setShowRegistration(false)
+    setShowLogin(false)
   }
 
   const headerAction = activeGame
     ? <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
-    : showRegistration
+    : showRegistration || showLogin
       ? <AppHeaderAction onClick={returnToArcade} icon="←" label="Back to arcade" collapseOnSmall />
-      : <AppHeaderAction onClick={() => setShowRegistration(true)} icon="+" label="Create account" />
+      : <>
+          <AppHeaderAction onClick={() => setShowLogin(true)} icon="→" label="Sign in" />
+          <AppHeaderAction onClick={() => setShowRegistration(true)} icon="+" label="Create account" />
+        </>
 
   return (
     <AppShell header={<AppHeader brand={appConfig.name} onHome={returnToArcade} actions={headerAction} />}>
@@ -67,7 +73,7 @@ function ArcadeContent() {
           {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
         </GameViewport>
       </PageContainer>
-      {!activeGame && !showRegistration && (
+      {!activeGame && !showRegistration && !showLogin && (
         <PageContainer spacing="hero">
           <PageIntro eyebrow="Choose a game" title="Your pocket arcade" description="Games load only when you select them, so the arcade stays quick and lightweight." />
           <GameCatalogue games={gameRegistry} onSelect={(game) => void play(game)} />
@@ -75,6 +81,9 @@ function ArcadeContent() {
       )}
       {showRegistration && (
         <RegistrationPage client={registrationClient} onCancel={returnToArcade} onSuccess={returnToArcade} />
+      )}
+      {showLogin && (
+        <LoginPage client={loginClient} onCancel={returnToArcade} onSuccess={returnToArcade} />
       )}
     </AppShell>
   )

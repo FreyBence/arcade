@@ -1,19 +1,19 @@
-.registration-page {
+.auth-page {
   display: grid;
   gap: var(--space-8);
 }
 
-.registration-page__card {
+.auth-page__card {
   width: min(100%, var(--reading-width));
   box-sizing: border-box;
 }
 
-.registration-page__form {
+.auth-page__form {
   display: grid;
   gap: var(--space-5);
 }
 
-.registration-page__error {
+.auth-page__error {
   margin: 0;
   padding: var(--space-3) var(--space-4);
   color: var(--color-danger-primary);
@@ -22,7 +22,7 @@
   font: var(--type-small);
 }
 
-.registration-page__actions {
+.auth-page__actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-3);
@@ -30,7 +30,7 @@
 }
 
 @media (max-width: 520px) {
-  .registration-page__actions .button {
+  .auth-page__actions .button {
     flex: 1 1 auto;
   }
 }

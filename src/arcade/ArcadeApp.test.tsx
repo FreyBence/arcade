@@ -80,6 +80,11 @@ const appCases = [
     input: { action: 'register' as const },
     expected: { catalogueVisible: false, gameVisible: false, loadingVisible: false, stops: 0, destroys: 0, registrationVisible: true },
   },
+  {
+    name: 'opens login from the main header',
+    input: { action: 'login' as const },
+    expected: { catalogueVisible: false, gameVisible: false, loadingVisible: false, stops: 0, destroys: 0, loginVisible: true },
+  },
 ]
 
 describe('ArcadeApp behavior', () => {
@@ -126,6 +131,9 @@ describe('ArcadeApp behavior', () => {
     if (input.action === 'register') {
       await user.click(screen.getByRole('button', { name: 'Create account' }))
     }
+    if (input.action === 'login') {
+      await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    }
 
     expect({
       catalogueVisible: screen.queryByRole('heading', { name: 'Your pocket arcade' }) !== null,
@@ -137,6 +145,7 @@ describe('ArcadeApp behavior', () => {
       ...('exitFullscreenVisible' in expected ? { exitFullscreenVisible: screen.queryByRole('button', { name: 'Exit fullscreen' }) !== null } : {}),
       ...('errorVisible' in expected ? { errorVisible: screen.queryByRole('alert') !== null } : {}),
       ...('registrationVisible' in expected ? { registrationVisible: screen.queryByRole('heading', { name: 'Join the arcade' }) !== null } : {}),
+      ...('loginVisible' in expected ? { loginVisible: screen.queryByRole('heading', { name: 'Sign in to the arcade' }) !== null } : {}),
     }).toEqual(expected)
   })
 })

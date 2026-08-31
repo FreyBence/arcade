@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useClientIdentity } from '../../shared/identity'
 import { Button, Card, FieldMessage, FormField, Input, Label, PageContainer, PageIntro, PasswordInput } from '../../shared/ui'
 import { RegistrationClientError, type RegistrationClient, type RegistrationFormInput } from './registrationClient'
-import './RegistrationPage.css'
+import './AuthPage.css'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -68,10 +68,10 @@ export function RegistrationPage({ client, onCancel, onSuccess }: RegistrationPa
   }
 
   return (
-    <PageContainer spacing="standard" className="registration-page">
+    <PageContainer spacing="standard" className="auth-page">
       <PageIntro eyebrow="Create account" title="Join the arcade" description="Save your progress and play with the same account across your devices." />
-      <Card className="registration-page__card">
-        <form className="registration-page__form" noValidate onSubmit={(event) => void submit(event)}>
+      <Card className="auth-page__card">
+        <form className="auth-page__form" noValidate onSubmit={(event) => void submit(event)}>
           <FormField invalid={Boolean(errors.name)} disabled={isSubmitting}>
             <Label>Name</Label>
             <Input name="name" autoComplete="name" maxLength={100} />
@@ -89,8 +89,8 @@ export function RegistrationPage({ client, onCancel, onSuccess }: RegistrationPa
               ? <FieldMessage variant="error">{errors.password}</FieldMessage>
               : <FieldMessage>Use at least 8 characters.</FieldMessage>}
           </FormField>
-          {submissionError && <p className="registration-page__error" role="alert">{submissionError}</p>}
-          <div className="registration-page__actions">
+          {submissionError && <p className="auth-page__error" role="alert">{submissionError}</p>}
+          <div className="auth-page__actions">
             {onCancel && <Button variant="ghost" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>}
             <Button type="submit" isLoading={isSubmitting} loadingLabel="Creating account">Create account</Button>
           </div>

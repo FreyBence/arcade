@@ -1,3 +1,6 @@
+export { LoginPage } from './LoginPage'
+export { createBrowserLoginClient, LoginClientError } from './loginClient'
+export type { LoginClient, LoginFormInput } from './loginClient'
 export { RegistrationPage } from './RegistrationPage'
 export { createBrowserRegistrationClient, RegistrationClientError } from './registrationClient'
 export type { RegistrationClient, RegistrationFormInput } from './registrationClient'
