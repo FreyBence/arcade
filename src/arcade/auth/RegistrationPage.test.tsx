@@ -53,6 +53,7 @@ describe('registration page', () => {
       : Promise.resolve(USER))
     const store = renderPage(register)
     await screen.findByRole('heading', { name: 'Join the arcade' })
+    expect(screen.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
 
     await submit(input.fields)
 

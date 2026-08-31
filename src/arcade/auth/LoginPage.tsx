@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useClientIdentity } from '../../shared/identity'
 import { Button, Card, FieldMessage, FormField, Input, Label, PageContainer, PageIntro, PasswordInput } from '../../shared/ui'
 import { LoginClientError, type LoginClient, type LoginFormInput } from './loginClient'
+import { GoogleAuthenticationButton } from './GoogleAuthenticationButton'
 import './AuthPage.css'
 
 type FieldErrors = Partial<Record<keyof LoginFormInput, string>>
@@ -57,6 +58,10 @@ export function LoginPage({ client, onCancel, onSuccess }: LoginPageProps) {
     <PageContainer spacing="standard" className="auth-page">
       <PageIntro eyebrow="Welcome back" title="Sign in to the arcade" description="Continue your progress and play with your account on this device." />
       <Card className="auth-page__card">
+        <div className="auth-page__federated">
+          <GoogleAuthenticationButton disabled={isSubmitting} />
+          <span className="auth-page__separator">or sign in with email</span>
+        </div>
         <form className="auth-page__form" noValidate onSubmit={(event) => void submit(event)}>
           <FormField invalid={Boolean(errors.email)} disabled={isSubmitting}>
             <Label>Email</Label>

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useClientIdentity } from '../../shared/identity'
 import { Button, Card, FieldMessage, FormField, Input, Label, PageContainer, PageIntro, PasswordInput } from '../../shared/ui'
 import { RegistrationClientError, type RegistrationClient, type RegistrationFormInput } from './registrationClient'
+import { GoogleAuthenticationButton } from './GoogleAuthenticationButton'
 import './AuthPage.css'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -71,6 +72,10 @@ export function RegistrationPage({ client, onCancel, onSuccess }: RegistrationPa
     <PageContainer spacing="standard" className="auth-page">
       <PageIntro eyebrow="Create account" title="Join the arcade" description="Save your progress and play with the same account across your devices." />
       <Card className="auth-page__card">
+        <div className="auth-page__federated">
+          <GoogleAuthenticationButton disabled={isSubmitting} />
+          <span className="auth-page__separator">or create an account with email</span>
+        </div>
         <form className="auth-page__form" noValidate onSubmit={(event) => void submit(event)}>
           <FormField invalid={Boolean(errors.name)} disabled={isSubmitting}>
             <Label>Name</Label>
