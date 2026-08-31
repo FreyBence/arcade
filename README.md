@@ -23,6 +23,8 @@ npm run dev
 
 The development command starts PostgreSQL and waits for it to become healthy, starts the API server, and then starts Vite after the API port is available. Vite proxies `/api/*` requests to the API server. Registration and login therefore require Docker and the server-only authentication variables in `.env`. The secure `__Host-` refresh cookie works on `localhost`; deployed environments must use HTTPS.
 
+Google authentication additionally requires a Google Cloud OAuth 2.0 Web application. Configure its authorized redirect URI as `http://localhost:4173/api/auth/google/callback` locally, then set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, and `GOOGLE_APP_URL` in `.env`. The local app URL is `http://localhost:5173`; production callback and app URLs must use HTTPS. These values are server-only and must never use the `VITE_` prefix.
+
 ## Code quality
 
 Run ESLint before submitting changes:
@@ -102,7 +104,7 @@ npm run db:deploy
 npm start
 ```
 
-The Node server exposes the authentication API and serves the built single-page application from `dist/`. Configure `DATABASE_URL`, all `ACCESS_TOKEN_*` and `REFRESH_TOKEN_*` values, and optionally `PORT` as server-only environment variables. Deploy behind HTTPS so the secure refresh cookie is accepted. The process handles `SIGINT` and `SIGTERM`, stops accepting new requests, and disconnects Prisma during shutdown.
+The Node server exposes the authentication API and serves the built single-page application from `dist/`. Configure `DATABASE_URL`, all `ACCESS_TOKEN_*`, `REFRESH_TOKEN_*`, and `GOOGLE_*` values, and optionally `PORT` as server-only environment variables. Deploy behind HTTPS so secure authentication cookies are accepted. The process handles `SIGINT` and `SIGTERM`, stops accepting new requests, and disconnects Prisma during shutdown.
 
 ## Architecture
 

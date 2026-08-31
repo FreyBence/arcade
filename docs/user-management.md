@@ -41,6 +41,7 @@ Merge meaningful progress rather than blindly replacing the user's final snapsho
 
 - `User`: identity, password hash, role, Dino Coins, account metadata, timestamps.
 - `Session`: user reference, refresh token/session data, expiry, timestamps, revocation state.
+- `ExternalIdentity`: provider, stable provider subject, linked user, and timestamps. Provider credentials are never application session credentials.
 - `GuestSession`: local guest identity and created/last-seen data only.
 - `UserGameProgress` / `GuestGameProgress`: per-game current snapshot and version.
 - `ProgressEvent`: event ID, game ID, type, payload, timestamp, and relevant version/checkpoint data.
@@ -54,7 +55,7 @@ Games -> ProgressService -> local guest storage or authenticated server persiste
 
 ## Implementation decisions still open
 
-- Exact Prisma/PostgreSQL schema and relations.
+- Exact progress-related Prisma/PostgreSQL schema and relations.
 - Token/session mechanics, email verification, and account recovery.
 - Guest storage mechanism and local-data versioning.
 - Event payload conventions and checkpoint thresholds.

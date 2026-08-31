@@ -23,10 +23,11 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
   }
 
   async findForAuthentication(email: string): Promise<CredentialUser | null> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email },
       select: { ...SAFE_USER_SELECTION, passwordHash: true },
     })
+    return user?.passwordHash ? { ...user, passwordHash: user.passwordHash } : null
   }
 
   findSafeById(id: string): Promise<SafeUser | null> {

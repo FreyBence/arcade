@@ -6,6 +6,7 @@ import { hashPassword, verifyPassword } from './auth/passwordService'
 import { PrismaUserRepository } from './auth/prismaUserRepository'
 import { createRefreshService, createLogoutHandler, createRefreshHandler, type RefreshConfig } from './auth/refresh'
 import { createRegistrationHandler } from './auth/registrationHandler'
+import { createGoogleAuthorizationHandler, createGoogleCallbackHandler, createGoogleIdentityVerifier, PrismaGoogleUserRepository, type GoogleAuthenticationConfig } from './auth/google'
 import { createRequestAuthenticator } from './auth/requestAuthentication'
 import { PrismaSessionRepository } from './auth/session'
 
@@ -15,12 +16,15 @@ export interface ApplicationApi {
   refresh: (request: Request) => Promise<Response>
   logout: (request: Request) => Promise<Response>
   identity: (request: Request) => Promise<Response>
+  googleAuthorization: (request: Request) => Promise<Response>
+  googleCallback: (request: Request) => Promise<Response>
 }
 
 export function createApplicationApi(
   prisma: PrismaClient,
   accessTokenConfig: AccessTokenConfig,
   refreshConfig: RefreshConfig,
+  googleConfig: GoogleAuthenticationConfig,
 ): ApplicationApi {
   const users = new PrismaUserRepository(prisma)
   const accessTokens = createAccessTokenService(accessTokenConfig)
@@ -37,5 +41,12 @@ export function createApplicationApi(
     refresh: createRefreshHandler(refreshConfig, refreshService),
     logout: createLogoutHandler(refreshConfig, refreshService),
     identity: createIdentityHandler(authenticator, users),
+    googleAuthorization: createGoogleAuthorizationHandler(googleConfig),
+    googleCallback: createGoogleCallbackHandler(
+      googleConfig,
+      createGoogleIdentityVerifier(googleConfig),
+      new PrismaGoogleUserRepository(prisma),
+      (user) => refreshService.start(user),
+    ),
   }
 }

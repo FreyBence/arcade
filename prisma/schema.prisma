@@ -16,15 +16,30 @@ model User {
   id              String   @id @default(uuid()) @db.Uuid
   name            String
   email           String   @unique
-  passwordHash    String
+  passwordHash    String?
   role            UserRole @default(VIEWER)
   dinoCoins       Int      @default(0)
   emailVerifiedAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   sessions        Session[]
+  externalIdentities ExternalIdentity[]
 
   @@map("users")
+}
+
+model ExternalIdentity {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  provider        String
+  providerSubject String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+  @@map("external_identities")
 }
 
 model Session {

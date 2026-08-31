@@ -17,6 +17,10 @@ export async function toWebRequest(request: IncomingMessage): Promise<Request> {
 
 export async function sendWebResponse(response: Response, serverResponse: ServerResponse): Promise<void> {
   serverResponse.statusCode = response.status
-  response.headers.forEach((value, name) => serverResponse.setHeader(name, value))
+  response.headers.forEach((value, name) => {
+    if (name !== 'set-cookie') serverResponse.setHeader(name, value)
+  })
+  const cookies = response.headers.getSetCookie()
+  if (cookies.length > 0) serverResponse.setHeader('set-cookie', cookies)
   serverResponse.end(Buffer.from(await response.arrayBuffer()))
 }

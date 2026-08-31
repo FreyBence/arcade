@@ -2,6 +2,7 @@ import { createApplicationApi } from './applicationApi'
 import { createApiRouter } from './apiRouter'
 import { readAccessTokenConfig } from './auth/accessToken'
 import { readRefreshConfig } from './auth/refresh'
+import { readGoogleAuthenticationConfig } from './auth/google'
 import { createPrismaClient } from './database/prisma'
 
 export function createConfiguredApplication(environment: Record<string, string | undefined>) {
@@ -13,6 +14,7 @@ export function createConfiguredApplication(environment: Record<string, string |
     prisma,
     readAccessTokenConfig(environment),
     readRefreshConfig(environment),
+    readGoogleAuthenticationConfig(environment),
   )
 
   return {
