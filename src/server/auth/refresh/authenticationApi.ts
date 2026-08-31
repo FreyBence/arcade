@@ -3,6 +3,7 @@ import { createAccessTokenService, type AccessTokenConfig } from '../accessToken
 import { createLoginHandler } from '../loginHandler'
 import { verifyPassword } from '../passwordService'
 import { PrismaUserRepository } from '../prismaUserRepository'
+import { createRequestAuthenticator } from '../requestAuthentication'
 import { PrismaSessionRepository } from '../session'
 import { createLogoutHandler } from './logoutHandler'
 import type { RefreshConfig } from './refreshConfig'
@@ -23,6 +24,7 @@ export function createAuthenticationApi(
   )
 
   return {
+    authenticate: createRequestAuthenticator(accessTokens),
     login: createLoginHandler({
       startSession: (user) => refreshService.start(user),
       users: new PrismaUserRepository(prisma),

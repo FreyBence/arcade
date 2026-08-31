@@ -50,6 +50,19 @@ export {
   serializeClearedRefreshCookie,
   serializeRefreshCookie,
 } from './refresh'
+export {
+  createRequestAuthenticator,
+  readBearerToken,
+  RequestAuthenticationError,
+  withAuthentication,
+} from './requestAuthentication'
+export type {
+  AccessTokenVerifier,
+  AuthenticatedRequestHandler,
+  RequestAuthenticationErrorCode,
+  RequestAuthenticator,
+  RequestIdentity,
+} from './requestAuthentication'
 export type {
   AccessTokenIssuer,
   RefreshClock,
