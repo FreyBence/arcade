@@ -18,6 +18,7 @@
   "dependencies": {
     "@prisma/client": "^7.10.0",
     "@vitejs/plugin-react": "latest",
+    "argon2": "^0.45.1",
     "phaser": "latest",
     "react": "latest",
     "react-dom": "latest",
