@@ -12,6 +12,7 @@ const persistedUser: SafeUser = {
   email: 'player@example.com',
   role: 'VIEWER',
   dinoCoins: 0,
+  profileImage: null,
   createdAt: CREATED_AT,
   updatedAt: UPDATED_AT,
 }
@@ -22,6 +23,7 @@ interface JsonUser {
   email: string
   role: UserRole
   dinoCoins: number
+  profileImage: string | null
   createdAt: string
   updatedAt: string
 }
@@ -70,6 +72,7 @@ const successfulRegistrationCases = [
         email: 'player@example.com',
         role: 'VIEWER',
         dinoCoins: 0,
+        profileImage: null,
         createdAt: '2026-08-31T00:00:00.000Z',
         updatedAt: '2026-08-31T00:00:00.000Z',
       },

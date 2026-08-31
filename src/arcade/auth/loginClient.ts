@@ -32,9 +32,9 @@ export function createBrowserLoginClient(fetcher: typeof fetch = fetch): LoginCl
         throw new LoginClientError('UNAVAILABLE')
       }
       if (!body.user || typeof body.accessToken !== 'string') throw new LoginClientError('UNAVAILABLE')
-      const { id, name, email, role, dinoCoins } = body.user
+      const { id, name, email, role, dinoCoins, profileImage } = body.user
       setAccessToken(body.accessToken)
-      return { id, name, email, role, dinoCoins }
+      return { id, name, email, role, dinoCoins, profileImage }
     },
   }
 }

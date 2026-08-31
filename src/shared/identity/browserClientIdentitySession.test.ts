@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ClientIdentitySessionError, createBrowserClientIdentitySession } from './browserClientIdentitySession'
 import { getAccessToken, setAccessToken } from './accessTokenStore'
 
-const USER = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12 } as const
+const USER = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12, profileImage: null } as const
 
 const restoreCases = [
   { name: 'restores a user from a valid refresh session', input: { refresh: 200, identity: 200, accessToken: 'renewed-token', user: USER }, expected: { user: USER, token: 'renewed-token', paths: ['/api/refresh', '/api/me'] } },

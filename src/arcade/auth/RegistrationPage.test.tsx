@@ -7,7 +7,7 @@ import type { GuestIdentityStore } from '../../shared/identity'
 import { RegistrationPage } from './RegistrationPage'
 import { RegistrationClientError, createBrowserRegistrationClient, type RegistrationClient } from './registrationClient'
 
-const USER: ClientIdentityUser = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 0 }
+const USER: ClientIdentityUser = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 0, profileImage: null }
 const VALID_INPUT = { name: 'Dino Player', email: 'player@example.com', password: 'safe-password' }
 
 function renderPage(register: RegistrationClient['register']) {

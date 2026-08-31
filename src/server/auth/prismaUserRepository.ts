@@ -11,6 +11,7 @@ const SAFE_USER_SELECTION = {
   email: true,
   role: true,
   dinoCoins: true,
+  profileImage: true,
   createdAt: true,
   updatedAt: true,
 } as const

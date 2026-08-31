@@ -52,9 +52,9 @@ export function createBrowserRegistrationClient(fetcher: typeof fetch = fetch): 
       const loginBody = await readBody(loginResponse)
       if (!loginResponse.ok || !loginBody.user || typeof loginBody.accessToken !== 'string') throw new RegistrationClientError('UNAVAILABLE')
 
-      const { id, name, email, role, dinoCoins } = loginBody.user
+      const { id, name, email, role, dinoCoins, profileImage } = loginBody.user
       setAccessToken(loginBody.accessToken)
-      return { id, name, email, role, dinoCoins }
+      return { id, name, email, role, dinoCoins, profileImage }
     },
   }
 }

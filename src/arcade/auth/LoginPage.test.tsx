@@ -7,7 +7,7 @@ import { LoginPage } from './LoginPage'
 import { createBrowserLoginClient, LoginClientError, type LoginClient } from './loginClient'
 
 const GUEST_ID = '0198f8f2-8ad8-7000-8000-000000000051'
-const USER: ClientIdentityUser = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12 }
+const USER: ClientIdentityUser = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12, profileImage: null }
 const VALID_INPUT = { email: 'player@example.com', password: 'safe-password' }
 
 function renderPage(login: LoginClient['login']) {

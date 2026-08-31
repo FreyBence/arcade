@@ -18,6 +18,7 @@ export interface SafeUser {
   email: string
   role: UserRole
   dinoCoins: number
+  profileImage: string | null
   createdAt: Date
   updatedAt: Date
 }

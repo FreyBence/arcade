@@ -2,7 +2,7 @@ import type { PrismaClient } from '../../../../generated/prisma/client'
 import type { SafeUser } from '../registrationTypes'
 import type { GoogleUserRepository, VerifiedGoogleIdentity } from './googleTypes'
 
-const SAFE_USER_SELECTION = { id: true, name: true, email: true, role: true, dinoCoins: true, createdAt: true, updatedAt: true } as const
+const SAFE_USER_SELECTION = { id: true, name: true, email: true, role: true, dinoCoins: true, profileImage: true, createdAt: true, updatedAt: true } as const
 const GOOGLE_PROVIDER = 'GOOGLE'
 
 export class PrismaGoogleUserRepository implements GoogleUserRepository {
@@ -26,7 +26,7 @@ export class PrismaGoogleUserRepository implements GoogleUserRepository {
         }
         return {
           id: existingUser.id, name: existingUser.name, email: existingUser.email, role: existingUser.role,
-          dinoCoins: existingUser.dinoCoins, createdAt: existingUser.createdAt, updatedAt: existingUser.updatedAt,
+          dinoCoins: existingUser.dinoCoins, profileImage: existingUser.profileImage, createdAt: existingUser.createdAt, updatedAt: existingUser.updatedAt,
         }
       }
 
@@ -36,7 +36,7 @@ export class PrismaGoogleUserRepository implements GoogleUserRepository {
           email: identity.email,
           emailVerifiedAt: new Date(),
           role: 'VIEWER',
-          dinoCoins: 0,
+          dinoCoins: 0, profileImage: null,
           externalIdentities: { create: { provider: GOOGLE_PROVIDER, providerSubject: identity.subject } },
         },
         select: SAFE_USER_SELECTION,

@@ -26,6 +26,7 @@ export async function loginUser(input: unknown, dependencies: LoginDependencies)
     email: credentialUser.email,
     role: credentialUser.role,
     dinoCoins: credentialUser.dinoCoins,
+    profileImage: credentialUser.profileImage,
     createdAt: credentialUser.createdAt,
     updatedAt: credentialUser.updatedAt,
   }

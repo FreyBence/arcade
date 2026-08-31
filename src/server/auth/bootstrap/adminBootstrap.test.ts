@@ -53,6 +53,7 @@ function safeUser(admin: NewAdminRecord, role: SafeUser['role'] = admin.role): S
     email: admin.email,
     role,
     dinoCoins: 0,
+    profileImage: null,
     createdAt: CREATED_AT,
     updatedAt: CREATED_AT,
   }

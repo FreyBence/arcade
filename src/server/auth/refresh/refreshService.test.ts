@@ -88,6 +88,7 @@ describe('refresh service', () => {
           email: 'player@example.com',
           role: 'VIEWER' as const,
           dinoCoins: 0,
+          profileImage: null,
           createdAt: NOW,
           updatedAt: NOW,
         },

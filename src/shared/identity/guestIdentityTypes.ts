@@ -19,6 +19,7 @@ export interface ClientIdentityUser {
   email: string
   role: UserRole
   dinoCoins: number
+  profileImage: string | null
 }
 
 export type ClientIdentityState =

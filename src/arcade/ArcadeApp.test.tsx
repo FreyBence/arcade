@@ -152,7 +152,7 @@ describe('ArcadeApp behavior', () => {
   })
 })
 
-const USER = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12 } as const
+const USER = { id: 'user-id', name: 'Dino Player', email: 'player@example.com', role: 'VIEWER', dinoCoins: 12, profileImage: null } as const
 const logoutCases = [
   {
     name: 'signs an authenticated user out and restores guest actions',

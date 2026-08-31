@@ -4,10 +4,10 @@ import { DuplicateEmailError } from '../auth/registrationErrors'
 import type { SafeUser } from '../auth/registrationTypes'
 import { createProfileHandler } from './profileHandler'
 
-const user: SafeUser = { id: 'current-user', name: 'New Name', email: 'new@example.com', role: 'VIEWER', dinoCoins: 12, createdAt: new Date(0), updatedAt: new Date(1) }
+const user: SafeUser = { id: 'current-user', name: 'New Name', email: 'new@example.com', role: 'VIEWER', dinoCoins: 12, profileImage: 'data:image/png;base64,aGVsbG8=', createdAt: new Date(0), updatedAt: new Date(1) }
 const updateCases = [
-  { name: 'updates only the authenticated user', input: { body: { name: 'New Name', email: 'NEW@example.com' }, result: user }, expected: { status: 200, code: undefined, update: ['current-user', { name: 'New Name', email: 'new@example.com' }] } },
-  { name: 'reports duplicate email addresses', input: { body: { name: 'New Name', email: 'used@example.com' }, result: new DuplicateEmailError() }, expected: { status: 409, code: 'DUPLICATE_EMAIL', update: ['current-user', { name: 'New Name', email: 'used@example.com' }] } },
+  { name: 'updates only the authenticated user', input: { body: { name: 'New Name', email: 'NEW@example.com', profileImage: 'data:image/png;base64,aGVsbG8=' }, result: user }, expected: { status: 200, code: undefined, update: ['current-user', { name: 'New Name', email: 'new@example.com', profileImage: 'data:image/png;base64,aGVsbG8=' }] } },
+  { name: 'reports duplicate email addresses', input: { body: { name: 'New Name', email: 'used@example.com', profileImage: null }, result: new DuplicateEmailError() }, expected: { status: 409, code: 'DUPLICATE_EMAIL', update: ['current-user', { name: 'New Name', email: 'used@example.com', profileImage: null }] } },
 ]
 
 describe('profile update handler', () => {

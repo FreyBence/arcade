@@ -9,6 +9,7 @@ const USER = {
   email: 'player@example.com',
   role: 'VIEWER' as const,
   dinoCoins: 12,
+  profileImage: null,
   createdAt: new Date('2026-08-31T00:00:00.000Z'),
   updatedAt: new Date('2026-08-31T00:00:00.000Z'),
 }

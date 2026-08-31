@@ -6,7 +6,7 @@ import { PrismaGoogleUserRepository } from './prismaGoogleUserRepository'
 const identity = { subject: 'google-subject', email: 'player@example.com', name: 'Dino Player' }
 const user: SafeUser = {
   id: '0198f8f2-8ad8-7000-8000-000000000001', name: identity.name, email: identity.email,
-  role: 'VIEWER', dinoCoins: 0, createdAt: new Date('2026-08-31T00:00:00.000Z'), updatedAt: new Date('2026-08-31T00:00:00.000Z'),
+  role: 'VIEWER', dinoCoins: 0, profileImage: null, createdAt: new Date('2026-08-31T00:00:00.000Z'), updatedAt: new Date('2026-08-31T00:00:00.000Z'),
 }
 
 const resolutionCases = [

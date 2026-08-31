@@ -1,6 +1,6 @@
 import { createAuthenticatedFetch, type ClientIdentityUser } from '../../shared/identity'
 
-export interface ProfileFormInput { name: string; email: string }
+export interface ProfileFormInput { name: string; email: string; profileImage: string | null }
 export interface ProfileClient { update(input: ProfileFormInput): Promise<ClientIdentityUser> }
 export class ProfileClientError extends Error {
   constructor(public readonly code: 'INVALID_PROFILE' | 'DUPLICATE_EMAIL' | 'UNAUTHORIZED' | 'UNAVAILABLE') { super(code); this.name = 'ProfileClientError' }
@@ -18,7 +18,7 @@ export function createBrowserProfileClient(fetcher: typeof fetch = fetch): Profi
       throw new ProfileClientError('UNAVAILABLE')
     }
     if (!body.user) throw new ProfileClientError('UNAVAILABLE')
-    const { id, name, email, role, dinoCoins } = body.user
-    return { id, name, email, role, dinoCoins }
+    const { id, name, email, role, dinoCoins, profileImage } = body.user
+    return { id, name, email, role, dinoCoins, profileImage }
   } }
 }

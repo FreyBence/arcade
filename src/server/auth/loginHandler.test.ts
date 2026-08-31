@@ -9,6 +9,7 @@ const safeUser: SafeUser = {
   email: 'player@example.com',
   role: 'VIEWER',
   dinoCoins: 0,
+  profileImage: null,
   createdAt: new Date('2026-08-31T00:00:00.000Z'),
   updatedAt: new Date('2026-08-31T00:00:00.000Z'),
 }
@@ -74,6 +75,7 @@ const successfulLoginCases = [
         email: 'player@example.com',
         role: 'VIEWER',
         dinoCoins: 0,
+        profileImage: null,
         createdAt: '2026-08-31T00:00:00.000Z',
         updatedAt: '2026-08-31T00:00:00.000Z',
       },

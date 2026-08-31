@@ -1,6 +1,7 @@
 import type { ClientIdentitySession } from './clientIdentityStore'
 import { setAccessToken } from './accessTokenStore'
 import type { ClientIdentityUser } from './guestIdentityTypes'
+import { isProfileImage } from '../profile'
 
 export class ClientIdentitySessionError extends Error {
   constructor() {
@@ -64,4 +65,5 @@ function isClientIdentityUser(value: unknown): value is ClientIdentityUser {
     && typeof user.email === 'string'
     && (user.role === 'ADMIN' || user.role === 'VIEWER')
     && typeof user.dinoCoins === 'number'
+    && isProfileImage(user.profileImage)
 }

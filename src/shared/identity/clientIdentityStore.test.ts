@@ -9,6 +9,7 @@ const USER: ClientIdentityUser = {
   email: 'player@example.com',
   role: 'VIEWER',
   dinoCoins: 12,
+  profileImage: null,
 }
 
 function createDependencies(restoredUser: ClientIdentityUser | null, storedGuestId: string | null = GUEST_ID) {
