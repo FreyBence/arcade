@@ -1,4 +1,6 @@
 export { PASSWORD_HASH_OPTIONS } from './constants'
+export { AdminBootstrapError, bootstrapAdmin, readAdminBootstrapConfig } from './bootstrap'
+export type { AdminBootstrapConfig, AdminBootstrapRepository, NewAdminRecord } from './bootstrap'
 export {
   requireAnyRole,
   protectAdminEndpoint,

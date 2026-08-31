@@ -77,6 +77,16 @@ npm run db:migrate
 
 Check its readiness with `docker compose ps`. The database data persists in the `postgres_data` Docker volume. To remove the local database and all of its data, run `docker compose down -v`.
 
+## Bootstrap the initial administrator
+
+After applying database migrations, provide `ADMIN_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` as server-only environment variables, then run:
+
+```bash
+npm run admin:bootstrap
+```
+
+The command validates the values, hashes the password with the application password service, and creates an `ADMIN`. It is safe to repeat with the same email: an existing administrator is left unchanged. If that email belongs to a non-admin account, the command fails without changing its role or password. Do not commit real administrator credentials or expose them through `VITE_` variables.
+
 ## Architecture
 
 - React renders the arcade catalogue and surrounding application UI.

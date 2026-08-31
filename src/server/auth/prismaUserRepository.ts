@@ -2,6 +2,7 @@ import { Prisma, type PrismaClient } from '../../../generated/prisma/client'
 import type { AuthenticationUserRepository, CredentialUser } from './loginTypes'
 import { DuplicateEmailError } from './registrationErrors'
 import type { NewUserRecord, SafeUser, UserRepository } from './registrationTypes'
+import type { AdminBootstrapRepository, NewAdminRecord } from './bootstrap'
 
 const SAFE_USER_SELECTION = {
   id: true,
@@ -13,7 +14,7 @@ const SAFE_USER_SELECTION = {
   updatedAt: true,
 } as const
 
-export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository {
+export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository, AdminBootstrapRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findIdByEmail(email: string): Promise<string | null> {
@@ -37,5 +38,14 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
       }
       throw error
     }
+  }
+
+  async upsertAdmin(admin: NewAdminRecord): Promise<SafeUser> {
+    return this.prisma.user.upsert({
+      where: { email: admin.email },
+      update: {},
+      create: admin,
+      select: SAFE_USER_SELECTION,
+    })
   }
 }
