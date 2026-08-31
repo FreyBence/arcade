@@ -35,5 +35,11 @@ export function createRefreshService(
 
       return accessTokens.issue({ userId: session.userId, role: session.userRole })
     },
+
+    async logout(refreshToken: string): Promise<void> {
+      const session = await sessions.findByRefreshTokenHash(hashRefreshToken(refreshToken))
+      if (!session || session.revokedAt !== null) return
+      await sessions.revoke(session.id, clock.now())
+    },
   }
 }

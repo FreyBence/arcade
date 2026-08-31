@@ -4,6 +4,10 @@ export function serializeRefreshCookie(refreshToken: string, config: RefreshConf
   return `${config.cookieName}=${encodeURIComponent(refreshToken)}; Max-Age=${config.lifetimeSeconds}; Path=/; HttpOnly; Secure; SameSite=Strict`
 }
 
+export function serializeClearedRefreshCookie(config: RefreshConfig): string {
+  return `${config.cookieName}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly; Secure; SameSite=Strict`
+}
+
 export function readRefreshCookie(cookieHeader: string | null, cookieName: string): string | null {
   if (!cookieHeader) return null
 

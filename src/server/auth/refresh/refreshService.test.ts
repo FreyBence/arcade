@@ -3,6 +3,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { AuthenticationSession, AuthenticationSessionRepository, NewAuthenticationSession, RefreshableAuthenticationSession } from '../session'
 import { readRefreshConfig, type RefreshConfig } from './refreshConfig'
+import { createLogoutHandler } from './logoutHandler'
 import { createRefreshHandler } from './refreshHandler'
 import { InvalidRefreshSessionError } from './refreshErrors'
 import { createRefreshService } from './refreshService'
@@ -156,6 +157,69 @@ describe('refresh service', () => {
     expect((error as Error).name).toBe(expected)
     expect(issue).not.toHaveBeenCalled()
   })
+
+  const logoutCases = [
+    {
+      name: 'revokes only the session represented by the current refresh credential',
+      input: refreshableSession(),
+      expected: { revokeCount: 1, id: '0198f8f2-8ad8-7000-8000-000000000010', revokedAt: NOW },
+    },
+    {
+      name: 'safely repeats logout for an already revoked session',
+      input: refreshableSession({ revokedAt: new Date('2026-08-30T00:00:00.000Z') }),
+      expected: { revokeCount: 0, id: null, revokedAt: null },
+    },
+    {
+      name: 'safely logs out an unknown refresh credential',
+      input: null,
+      expected: { revokeCount: 0, id: null, revokedAt: null },
+    },
+  ]
+
+  it.each(logoutCases)('$name', async ({ input, expected }) => {
+    const { repository } = createSessionRepository(input)
+    const revoke = vi.fn((id: string, revokedAt: Date) => {
+      void id
+      return Promise.resolve({ ...refreshableSession(), revokedAt })
+    })
+    repository.revoke = revoke
+    const service = createRefreshService(config, repository, { issue: vi.fn() }, { now: () => NOW })
+
+    await expect(service.logout('refresh-secret')).resolves.toBeUndefined()
+    expect({
+      revokeCount: revoke.mock.calls.length,
+      id: revoke.mock.calls[0]?.[0] ?? null,
+      revokedAt: revoke.mock.calls[0]?.[1] ?? null,
+    }).toEqual(expected)
+  })
+
+  const revokedRefreshCases = [
+    {
+      name: 'cannot renew access after the same session is logged out',
+      input: { refreshToken: 'refresh-secret' },
+      expected: 'InvalidRefreshSessionError',
+    },
+  ]
+
+  it.each(revokedRefreshCases)('$name', async ({ input, expected }) => {
+    let session = refreshableSession()
+    const repository: AuthenticationSessionRepository = {
+      create: vi.fn(),
+      findByRefreshTokenHash: vi.fn(() => Promise.resolve(session)),
+      revoke: vi.fn((id: string, revokedAt: Date) => {
+        session = { ...session, id, revokedAt }
+        return Promise.resolve(session)
+      }),
+    }
+    const issue = vi.fn(() => Promise.resolve('must-not-be-issued'))
+    const service = createRefreshService(config, repository, { issue }, { now: () => NOW })
+
+    await service.logout(input.refreshToken)
+    const error = await service.refresh(input.refreshToken).catch((caught: unknown) => caught)
+
+    expect((error as Error).name).toBe(expected)
+    expect(issue).not.toHaveBeenCalled()
+  })
 })
 
 describe('refresh API', () => {
@@ -182,5 +246,33 @@ describe('refresh API', () => {
     const body = await response.json() as unknown
 
     expect({ status: response.status, body, credential: refresh.mock.calls[0]?.[0] ?? null }).toEqual(expected)
+  })
+})
+
+describe('logout API', () => {
+  const logoutHandlerCases = [
+    {
+      name: 'revokes the current cookie and returns guest identity',
+      input: { cookie: '__Host-arcade_refresh=refresh-secret; theme=dark' },
+      expected: { status: 200, body: { identity: 'guest' }, credential: 'refresh-secret' },
+    },
+    {
+      name: 'clears the cookie when logout is repeated without a credential',
+      input: { cookie: 'theme=dark' },
+      expected: { status: 200, body: { identity: 'guest' }, credential: null },
+    },
+  ]
+
+  it.each(logoutHandlerCases)('$name', async ({ input, expected }) => {
+    const logout = vi.fn((credential: string) => {
+      void credential
+      return Promise.resolve()
+    })
+    const handler = createLogoutHandler(config, { logout })
+    const response = await handler(new Request('http://localhost/api/logout', { method: 'POST', headers: { cookie: input.cookie } }))
+    const body = await response.json() as unknown
+
+    expect({ status: response.status, body, credential: logout.mock.calls[0]?.[0] ?? null }).toEqual(expected)
+    expect(response.headers.get('set-cookie')).toBe('__Host-arcade_refresh=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly; Secure; SameSite=Strict')
   })
 })
