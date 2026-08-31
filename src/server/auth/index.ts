@@ -1,4 +1,10 @@
 export { PASSWORD_HASH_OPTIONS } from './constants'
+export {
+  requireAnyRole,
+  RoleAuthorizationError,
+  withAuthenticationAndRoles,
+  withRoleAuthorization,
+} from './authorization'
 export { createAccessTokenService, InvalidAccessTokenError, readAccessTokenConfig } from './accessToken'
 export type {
   AccessTokenClock,
