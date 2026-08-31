@@ -1,4 +1,12 @@
 export { PASSWORD_HASH_OPTIONS } from './constants'
+export { createAccessTokenService, InvalidAccessTokenError, readAccessTokenConfig } from './accessToken'
+export type {
+  AccessTokenClock,
+  AccessTokenConfig,
+  AccessTokenIdentity,
+  ServerEnvironment,
+  VerifiedAccessToken,
+} from './accessToken'
 export { hashPassword, verifyPassword } from './passwordService'
 export { createLoginApi } from './loginApi'
 export { LoginError } from './loginErrors'
