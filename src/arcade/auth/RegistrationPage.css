@@ -1,0 +1,36 @@
+.registration-page {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.registration-page__card {
+  width: min(100%, var(--reading-width));
+  box-sizing: border-box;
+}
+
+.registration-page__form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.registration-page__error {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-danger-primary);
+  background: var(--color-status-error-surface);
+  border-radius: var(--radius-sm);
+  font: var(--type-small);
+}
+
+.registration-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 520px) {
+  .registration-page__actions .button {
+    flex: 1 1 auto;
+  }
+}
