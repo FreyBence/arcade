@@ -12,7 +12,8 @@ function createStore(storedGuestId: string | null) {
   const save = vi.fn((guestId: string) => {
     void guestId
   })
-  const store: GuestIdentityStore = { load, save }
+  const clear = vi.fn()
+  const store: GuestIdentityStore = { load, save, clear }
   return { load, save, store }
 }
 

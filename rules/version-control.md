@@ -23,3 +23,5 @@ Follow these rules for all branch, commit, merge, and cleanup operations.
 
 - For work tied to a GitHub issue, format each commit message as `issue-<issue-number>: <commit-message>`.
 - For commit creation check if the uncommited changes should be separated into more commits.
+- Commits should be atomic.
+- A feature and it's tests belongs int one comit.

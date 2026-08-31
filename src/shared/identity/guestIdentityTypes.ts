@@ -16,6 +16,7 @@ export type ResolvedClientIdentity = GuestIdentity | AuthenticatedClientIdentity
 export interface GuestIdentityStore {
   load(): string | null
   save(guestId: string): void
+  clear(): void
 }
 
 export interface GuestIdGenerator {
