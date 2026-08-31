@@ -8,6 +8,7 @@ import { createRefreshService, createLogoutHandler, createRefreshHandler, type R
 import { createRegistrationHandler } from './auth/registrationHandler'
 import { createGoogleAuthorizationHandler, createGoogleCallbackHandler, createGoogleIdentityVerifier, PrismaGoogleUserRepository, type GoogleAuthenticationConfig } from './auth/google'
 import { createRequestAuthenticator } from './auth/requestAuthentication'
+import { createProfileHandler } from './profile'
 import { PrismaSessionRepository } from './auth/session'
 
 export interface ApplicationApi {
@@ -16,6 +17,7 @@ export interface ApplicationApi {
   refresh: (request: Request) => Promise<Response>
   logout: (request: Request) => Promise<Response>
   identity: (request: Request) => Promise<Response>
+  updateProfile: (request: Request) => Promise<Response>
   googleAuthorization: (request: Request) => Promise<Response>
   googleCallback: (request: Request) => Promise<Response>
 }
@@ -41,6 +43,7 @@ export function createApplicationApi(
     refresh: createRefreshHandler(refreshConfig, refreshService),
     logout: createLogoutHandler(refreshConfig, refreshService),
     identity: createIdentityHandler(authenticator, users),
+    updateProfile: createProfileHandler(authenticator, users),
     googleAuthorization: createGoogleAuthorizationHandler(googleConfig),
     googleCallback: createGoogleCallbackHandler(
       googleConfig,

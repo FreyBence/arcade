@@ -3,6 +3,7 @@ import type { AuthenticationUserRepository, CredentialUser } from './loginTypes'
 import { DuplicateEmailError } from './registrationErrors'
 import type { NewUserRecord, SafeUser, UserRepository } from './registrationTypes'
 import type { AdminBootstrapRepository, NewAdminRecord } from './bootstrap'
+import type { ProfileUserRepository, ProfileInput } from '../profile/profileTypes'
 
 const SAFE_USER_SELECTION = {
   id: true,
@@ -14,7 +15,7 @@ const SAFE_USER_SELECTION = {
   updatedAt: true,
 } as const
 
-export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository, AdminBootstrapRepository {
+export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository, AdminBootstrapRepository, ProfileUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findIdByEmail(email: string): Promise<string | null> {
@@ -41,6 +42,18 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new DuplicateEmailError()
       }
+      throw error
+    }
+  }
+
+  async updateProfile(id: string, profile: ProfileInput): Promise<SafeUser | null> {
+    try {
+      return await this.prisma.user.update({ where: { id }, data: profile, select: SAFE_USER_SELECTION })
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new DuplicateEmailError()
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') return null
       throw error
     }
   }

@@ -2,7 +2,7 @@ import type { ApplicationApi } from './applicationApi'
 import { jsonResponse } from './auth/utils'
 
 interface RouteDefinition {
-  method: 'GET' | 'POST'
+  method: 'GET' | 'POST' | 'PATCH'
   handler(request: Request): Promise<Response>
 }
 
@@ -13,6 +13,7 @@ export function createApiRouter(api: ApplicationApi) {
     ['/api/refresh', { method: 'POST', handler: api.refresh }],
     ['/api/logout', { method: 'POST', handler: api.logout }],
     ['/api/me', { method: 'GET', handler: api.identity }],
+    ['/api/profile', { method: 'PATCH', handler: api.updateProfile }],
     ['/api/auth/google', { method: 'GET', handler: api.googleAuthorization }],
     ['/api/auth/google/callback', { method: 'GET', handler: api.googleCallback }],
   ])
