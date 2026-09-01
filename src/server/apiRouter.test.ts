@@ -4,7 +4,7 @@ import { createApiRouter } from './apiRouter'
 
 function createApi(): ApplicationApi {
   const handler = vi.fn((request: Request) => Promise.resolve(Response.json({ path: new URL(request.url).pathname })))
-  return { register: handler, login: handler, refresh: handler, logout: handler, identity: handler, updateProfile: handler, googleAuthorization: handler, googleCallback: handler }
+  return { register: handler, login: handler, refresh: handler, logout: handler, identity: handler, updateProfile: handler, changePassword: handler, googleAuthorization: handler, googleCallback: handler }
 }
 
 const routeCases = [
@@ -14,6 +14,7 @@ const routeCases = [
   { name: 'routes logout', input: { path: '/api/logout', method: 'POST' }, expected: { status: 200, allow: null, code: undefined } },
   { name: 'routes current identity', input: { path: '/api/me', method: 'GET' }, expected: { status: 200, allow: null, code: undefined } },
   { name: 'routes profile updates', input: { path: '/api/profile', method: 'PATCH' }, expected: { status: 200, allow: null, code: undefined } },
+  { name: 'routes password changes', input: { path: '/api/password', method: 'PATCH' }, expected: { status: 200, allow: null, code: undefined } },
   { name: 'routes Google authorization', input: { path: '/api/auth/google', method: 'GET' }, expected: { status: 200, allow: null, code: undefined } },
   { name: 'routes Google callback', input: { path: '/api/auth/google/callback', method: 'GET' }, expected: { status: 200, allow: null, code: undefined } },
   { name: 'rejects an unsupported method', input: { path: '/api/login', method: 'GET' }, expected: { status: 405, allow: 'POST', code: 'METHOD_NOT_ALLOWED' } },

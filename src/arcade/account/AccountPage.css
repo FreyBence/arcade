@@ -5,4 +5,6 @@
 .account-page__actions { display: flex; justify-content: flex-end; }
 .account-page__picture-field { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-4); }
 .account-page__picture-preview { width: 5rem; height: 5rem; border-radius: var(--radius-full); object-fit: cover; border: 1px solid var(--color-border-default); }
+.account-page__section-title { margin: 0; font: var(--type-section-title); color: var(--color-text-primary); }
+.account-page__section-description { margin: var(--space-2) 0 0; font: var(--type-body); color: var(--color-text-secondary); }
 @media (max-width: 520px) { .account-page__actions .button { width: 100%; } }

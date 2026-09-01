@@ -10,3 +10,4 @@ export const AUTH_FIELD_LIMITS = {
 export const LOGIN_REQUEST_FIELDS: readonly string[] = ['email', 'password']
 export const REGISTRATION_REQUEST_FIELDS: readonly string[] = ['name', 'email', 'password']
 export const PROFILE_REQUEST_FIELDS: readonly string[] = ['name', 'email', 'profileImage']
+export const PASSWORD_CHANGE_REQUEST_FIELDS: readonly string[] = ['currentPassword', 'newPassword']

@@ -4,6 +4,7 @@ import { DuplicateEmailError } from './registrationErrors'
 import type { NewUserRecord, SafeUser, UserRepository } from './registrationTypes'
 import type { AdminBootstrapRepository, NewAdminRecord } from './bootstrap'
 import type { ProfileUserRepository, ProfileInput } from '../profile/profileTypes'
+import type { PasswordChangeUserRepository } from './passwordChange'
 
 const SAFE_USER_SELECTION = {
   id: true,
@@ -16,7 +17,7 @@ const SAFE_USER_SELECTION = {
   updatedAt: true,
 } as const
 
-export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository, AdminBootstrapRepository, ProfileUserRepository {
+export class PrismaUserRepository implements UserRepository, AuthenticationUserRepository, AdminBootstrapRepository, ProfileUserRepository, PasswordChangeUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findIdByEmail(email: string): Promise<string | null> {
@@ -34,6 +35,16 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
 
   findSafeById(id: string): Promise<SafeUser | null> {
     return this.prisma.user.findUnique({ where: { id }, select: SAFE_USER_SELECTION })
+  }
+
+  async findPasswordHashById(id: string): Promise<string | null> {
+    const user = await this.prisma.user.findUnique({ where: { id }, select: { passwordHash: true } })
+    return user?.passwordHash ?? null
+  }
+
+  async updatePasswordHash(id: string, passwordHash: string): Promise<boolean> {
+    const result = await this.prisma.user.updateMany({ where: { id }, data: { passwordHash } })
+    return result.count === 1
   }
 
   async create(user: NewUserRecord): Promise<SafeUser> {

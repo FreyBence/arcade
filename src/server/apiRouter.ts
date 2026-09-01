@@ -14,6 +14,7 @@ export function createApiRouter(api: ApplicationApi) {
     ['/api/logout', { method: 'POST', handler: api.logout }],
     ['/api/me', { method: 'GET', handler: api.identity }],
     ['/api/profile', { method: 'PATCH', handler: api.updateProfile }],
+    ['/api/password', { method: 'PATCH', handler: api.changePassword }],
     ['/api/auth/google', { method: 'GET', handler: api.googleAuthorization }],
     ['/api/auth/google/callback', { method: 'GET', handler: api.googleCallback }],
   ])

@@ -10,6 +10,7 @@ import { createGoogleAuthorizationHandler, createGoogleCallbackHandler, createGo
 import { createRequestAuthenticator } from './auth/requestAuthentication'
 import { createProfileHandler } from './profile'
 import { PrismaSessionRepository } from './auth/session'
+import { createPasswordChangeHandler } from './auth/passwordChange'
 
 export interface ApplicationApi {
   register: (request: Request) => Promise<Response>
@@ -18,6 +19,7 @@ export interface ApplicationApi {
   logout: (request: Request) => Promise<Response>
   identity: (request: Request) => Promise<Response>
   updateProfile: (request: Request) => Promise<Response>
+  changePassword: (request: Request) => Promise<Response>
   googleAuthorization: (request: Request) => Promise<Response>
   googleCallback: (request: Request) => Promise<Response>
 }
@@ -44,6 +46,7 @@ export function createApplicationApi(
     logout: createLogoutHandler(refreshConfig, refreshService),
     identity: createIdentityHandler(authenticator, users),
     updateProfile: createProfileHandler(authenticator, users),
+    changePassword: createPasswordChangeHandler(authenticator, { users, verifyPassword, hashPassword }),
     googleAuthorization: createGoogleAuthorizationHandler(googleConfig),
     googleCallback: createGoogleCallbackHandler(
       googleConfig,

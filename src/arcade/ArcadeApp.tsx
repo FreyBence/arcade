@@ -6,7 +6,7 @@ import { GameManager } from './GameManager'
 import { gameRegistry } from './GameRegistry'
 import { LoginPage, RegistrationPage, createBrowserLoginClient, createBrowserRegistrationClient } from './auth'
 import type { GameDefinition } from './types'
-import { AccountPage, createBrowserProfileClient } from './account'
+import { AccountPage, createBrowserPasswordClient, createBrowserProfileClient } from './account'
 import defaultProfilePicture from '../assets/default-profile-dinosaur.png'
 
 export function ArcadeApp() {
@@ -34,6 +34,7 @@ function ArcadeContent() {
   const [registrationClient] = useState(createBrowserRegistrationClient)
   const [loginClient] = useState(createBrowserLoginClient)
   const [profileClient] = useState(createBrowserProfileClient)
+  const [passwordClient] = useState(createBrowserPasswordClient)
 
   useEffect(() => {
     const manager = new GameManager()
@@ -110,7 +111,7 @@ function ArcadeContent() {
       {showLogin && (
         <LoginPage client={loginClient} onCancel={returnToArcade} onSuccess={returnToArcade} />
       )}
-      {showAccount && identity.state.status === 'authenticated' && <AccountPage client={profileClient} />}
+      {showAccount && identity.state.status === 'authenticated' && <AccountPage client={profileClient} passwordClient={passwordClient} />}
     </AppShell>
   )
 }
