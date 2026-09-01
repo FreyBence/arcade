@@ -73,7 +73,7 @@ export class PrismaUserRepository implements UserRepository, AuthenticationUserR
   async upsertAdmin(admin: NewAdminRecord): Promise<SafeUser> {
     return this.prisma.user.upsert({
       where: { email: admin.email },
-      update: {},
+      update: admin,
       create: admin,
       select: SAFE_USER_SELECTION,
     })

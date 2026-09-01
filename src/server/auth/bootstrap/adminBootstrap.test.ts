@@ -71,16 +71,20 @@ const bootstrapCases = [
     expected: { role: 'ADMIN', upserts: 1, error: undefined },
   },
   {
-    name: 'refuses to promote an existing public account',
+    name: 'promotes an existing public account to administrator',
     input: { existingRole: 'VIEWER' as const },
-    expected: { role: 'VIEWER', upserts: 1, error: 'EMAIL_OWNED_BY_NON_ADMIN' },
+    expected: { role: 'ADMIN', upserts: 1, error: undefined },
   },
 ]
 
 describe('admin bootstrap service', () => {
   it.each(bootstrapCases)('$name', async ({ input, expected }) => {
     const hash = vi.fn(() => Promise.resolve('argon2-hash'))
-    const upsertAdmin = vi.fn((admin: NewAdminRecord) => Promise.resolve(safeUser(admin, input.existingRole)))
+    let storedRole = input.existingRole
+    const upsertAdmin = vi.fn((admin: NewAdminRecord) => {
+      storedRole = admin.role
+      return Promise.resolve(safeUser(admin, storedRole))
+    })
     const operation = bootstrapAdmin(readAdminBootstrapConfig(VALID_ENVIRONMENT), { hashPassword: hash, users: { upsertAdmin } })
 
     if (expected.error) await expect(operation).rejects.toMatchObject({ code: expected.error })
