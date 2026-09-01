@@ -4,6 +4,7 @@ import { PROFILE_IMAGE_ACCEPTED_TYPES, PROFILE_IMAGE_MAX_BYTES } from '../../sha
 import { Button, Card, FieldMessage, FormField, Input, Label, PageContainer, PageIntro, useToast } from '../../shared/ui'
 import { ProfileClientError, type ProfileClient, type ProfileFormInput } from './profileClient'
 import './AccountPage.css'
+import defaultProfilePicture from '../../assets/default-profile-dinosaur.png'
 
 type FieldErrors = Partial<Record<keyof ProfileFormInput, string>>
 const readValue = (form: FormData, name: string) => { const value = form.get(name); return typeof value === 'string' ? value : '' }
@@ -37,7 +38,7 @@ export function AccountPage({ client }: { client: ProfileClient }) {
   return <PageContainer spacing="standard" className="account-page"><PageIntro eyebrow="Your account" title="Profile" description="Keep your account details up to date." />
     <Card className="account-page__card"><form className="account-page__form" noValidate onSubmit={(event) => void submit(event)}>
       <div className="account-page__picture-field">
-        {profileImage ? <img className="account-page__picture-preview" src={profileImage} alt="Profile preview" /> : <div className="account-page__picture-fallback" aria-label="No profile picture">{user.name.slice(0, 1).toUpperCase()}</div>}
+        <img className="account-page__picture-preview" src={profileImage ?? defaultProfilePicture} alt="Profile preview" />
         <div><Label htmlFor="profile-picture">Profile picture</Label><Input id="profile-picture" type="file" accept={PROFILE_IMAGE_ACCEPTED_TYPES.join(',')} onChange={(event) => void selectImage(event)} disabled={isSubmitting} />
           <FieldMessage variant={imageError ? 'error' : 'hint'}>{imageError ?? 'JPEG, PNG, or WebP. Maximum 1 MB.'}</FieldMessage>{profileImage && <Button size="small" variant="ghost" onClick={() => setProfileImage(null)} disabled={isSubmitting}>Remove picture</Button>}</div>
       </div>

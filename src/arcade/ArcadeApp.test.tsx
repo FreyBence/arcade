@@ -157,12 +157,12 @@ const logoutCases = [
   {
     name: 'signs an authenticated user out and restores guest actions',
     input: { logoutStatus: 200 },
-    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], signOutVisible: false, signInVisible: true, error: undefined },
+    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], profilePictureBeforeLogout: true, signOutVisible: false, signInVisible: true, error: undefined },
   },
   {
     name: 'keeps authenticated UI available when logout fails',
     input: { logoutStatus: 503 },
-    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], signOutVisible: true, signInVisible: false, error: 'Sign out failed. Please try again.' },
+    expected: { paths: ['/api/refresh', '/api/login', '/api/logout'], profilePictureBeforeLogout: true, signOutVisible: true, signInVisible: false, error: 'Sign out failed. Please try again.' },
   },
 ]
 
@@ -183,12 +183,14 @@ describe('ArcadeApp logout behavior', () => {
     await user.type(screen.getByLabelText('Email'), USER.email)
     await user.type(screen.getByLabelText('Password'), 'safe-password')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    const profilePictureBeforeLogout = screen.getByRole('button', { name: USER.name }).querySelector('img') !== null
     await user.click(await screen.findByRole('button', { name: 'Sign out' }))
 
     if (expected.error) expect(await screen.findByRole('alert')).toHaveTextContent(expected.error)
     else await screen.findByRole('button', { name: 'Sign in' })
     expect({
       paths,
+      profilePictureBeforeLogout,
       signOutVisible: screen.queryByRole('button', { name: 'Sign out' }) !== null,
       signInVisible: screen.queryByRole('button', { name: 'Sign in' }) !== null,
       error: expected.error,

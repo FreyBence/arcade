@@ -4,8 +4,6 @@
 .account-page__error { margin: 0; padding: var(--space-3) var(--space-4); color: var(--color-danger-primary); background: var(--color-status-error-surface); border-radius: var(--radius-sm); font: var(--type-small); }
 .account-page__actions { display: flex; justify-content: flex-end; }
 .account-page__picture-field { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-4); }
-.account-page__picture-preview, .account-page__picture-fallback { width: 5rem; height: 5rem; border-radius: var(--radius-full); object-fit: cover; border: 1px solid var(--color-border-default); }
-.account-page__picture-fallback { display: grid; place-items: center; background: var(--color-surface-hover); color: var(--color-text-accent); font: var(--type-page-title); }
-.account-profile-image, .account-profile-image__fallback { width: 2rem; height: 2rem; border-radius: var(--radius-full); object-fit: cover; }
-.account-profile-image__fallback { display: grid; place-items: center; background: var(--color-surface-hover); color: var(--color-text-accent); }
+.account-page__picture-preview { width: 5rem; height: 5rem; border-radius: var(--radius-full); object-fit: cover; border: 1px solid var(--color-border-default); }
+.account-profile-image { width: 2rem; height: 2rem; border-radius: var(--radius-full); object-fit: cover; }
 @media (max-width: 520px) { .account-page__actions .button { width: 100%; } }
