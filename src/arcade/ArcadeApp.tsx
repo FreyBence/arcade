@@ -78,7 +78,7 @@ function ArcadeContent() {
     ? <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
     : identity.state.status === 'authenticated'
       ? <>
-          <AppHeaderAction className="app-header__profile-action" onClick={() => setShowAccount(true)} icon={<img className="account-profile-image" src={identity.state.user.profileImage ?? defaultProfilePicture} alt="" />} label={identity.state.user.name} />
+          <AppHeaderAction className="app-header__profile-action" onClick={() => setShowAccount(true)} icon={<img className="app-header__profile-image" src={identity.state.user.profileImage ?? defaultProfilePicture} alt="" />} label={identity.state.user.name} />
           <AppHeaderAction onClick={() => void logout()} icon="←" label="Sign out" isLoading={isLoggingOut} loadingLabel="Signing out" />
         </>
       : showRegistration || showLogin

@@ -39,6 +39,20 @@
   flex: 0 0 auto;
 }
 
+.app-header__profile-action .button__content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-header__profile-image {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
 @media (max-width: 520px) {
   .app-header__collapsible-action {
     width: var(--touch-target-min);
