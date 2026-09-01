@@ -17,6 +17,7 @@ export function createApiRouter(api: ApplicationApi) {
     ['/api/password', { method: 'PATCH', handler: api.changePassword }],
     ['/api/auth/google', { method: 'GET', handler: api.googleAuthorization }],
     ['/api/auth/google/callback', { method: 'GET', handler: api.googleCallback }],
+    ['/api/admin/users', { method: 'GET', handler: api.adminUsers }],
   ])
 
   return async function routeApiRequest(request: Request): Promise<Response> {

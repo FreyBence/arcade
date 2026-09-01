@@ -8,6 +8,7 @@ import { LoginPage, RegistrationPage, createBrowserLoginClient, createBrowserReg
 import type { GameDefinition } from './types'
 import { AccountPage, createBrowserPasswordClient, createBrowserProfileClient } from './account'
 import defaultProfilePicture from '../assets/default-profile-dinosaur.png'
+import { AdminUsersPage, createBrowserAdminUsersClient } from './admin'
 
 export function ArcadeApp() {
   const [identityStore] = useState(() => createClientIdentityStore({
@@ -30,11 +31,13 @@ function ArcadeContent() {
   const [showRegistration, setShowRegistration] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
   const [showAccount, setShowAccount] = useState(false)
+  const [showAdminUsers, setShowAdminUsers] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [registrationClient] = useState(createBrowserRegistrationClient)
   const [loginClient] = useState(createBrowserLoginClient)
   const [profileClient] = useState(createBrowserProfileClient)
   const [passwordClient] = useState(createBrowserPasswordClient)
+  const [adminUsersClient] = useState(createBrowserAdminUsersClient)
 
   useEffect(() => {
     const manager = new GameManager()
@@ -61,6 +64,7 @@ function ArcadeContent() {
     setShowRegistration(false)
     setShowLogin(false)
     setShowAccount(false)
+    setShowAdminUsers(false)
   }
 
   async function logout() {
@@ -79,7 +83,8 @@ function ArcadeContent() {
     ? <AppHeaderAction onClick={returnToArcade} icon="×" label="Exit game" collapseOnSmall />
     : identity.state.status === 'authenticated'
       ? <>
-          <AppHeaderAction className="app-header__profile-action" onClick={() => setShowAccount(true)} icon={<img className="app-header__profile-image" src={identity.state.user.profileImage ?? defaultProfilePicture} alt="" />} label={identity.state.user.name} />
+          {identity.state.user.role === 'ADMIN' && <AppHeaderAction onClick={() => { setShowAccount(false); setShowAdminUsers(true) }} icon="⚙" label="Admin users" />}
+          <AppHeaderAction className="app-header__profile-action" onClick={() => { setShowAdminUsers(false); setShowAccount(true) }} icon={<img className="app-header__profile-image" src={identity.state.user.profileImage ?? defaultProfilePicture} alt="" />} label={identity.state.user.name} />
           <AppHeaderAction onClick={() => void logout()} icon="←" label="Sign out" isLoading={isLoggingOut} loadingLabel="Signing out" />
         </>
       : showRegistration || showLogin
@@ -99,7 +104,7 @@ function ArcadeContent() {
           {activeGame && <FullscreenButton fullscreen={isFullscreen} onToggle={() => managerRef.current?.toggleFullscreen()} />}
         </GameViewport>
       </PageContainer>
-      {!activeGame && !showRegistration && !showLogin && !showAccount && (
+      {!activeGame && !showRegistration && !showLogin && !showAccount && !showAdminUsers && (
         <PageContainer spacing="hero">
           <PageIntro eyebrow="Choose a game" title="Your pocket arcade" description="Games load only when you select them, so the arcade stays quick and lightweight." />
           <GameCatalogue games={gameRegistry} onSelect={(game) => void play(game)} />
@@ -112,6 +117,7 @@ function ArcadeContent() {
         <LoginPage client={loginClient} onCancel={returnToArcade} onSuccess={returnToArcade} />
       )}
       {showAccount && identity.state.status === 'authenticated' && <AccountPage client={profileClient} passwordClient={passwordClient} />}
+      {showAdminUsers && identity.state.status === 'authenticated' && identity.state.user.role === 'ADMIN' && <AdminUsersPage client={adminUsersClient} />}
     </AppShell>
   )
 }
