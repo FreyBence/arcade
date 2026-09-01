@@ -4,4 +4,5 @@ export type AdminUser = Pick<SafeUser, 'id' | 'name' | 'email' | 'role' | 'dinoC
 
 export interface AdminUserRepository {
   search(query: string): Promise<AdminUser[]>
+  setDinoCoins(userId: string, dinoCoins: number): Promise<AdminUser | null>
 }

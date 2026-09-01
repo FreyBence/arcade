@@ -1,7 +1,7 @@
 .admin-users-page { display: grid; gap: var(--space-6); }
 .admin-users-page > .form-field { width: min(100%, var(--reading-width)); }
 .admin-users-page__list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-.admin-users-page__user { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-4); }
+.admin-users-page__user { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(12rem, auto); align-items: center; gap: var(--space-4); }
 .admin-users-page__avatar { width: 3rem; height: 3rem; border: 1px solid var(--color-border-default); border-radius: var(--radius-full); object-fit: cover; }
 .admin-users-page__identity { min-width: 0; }
 .admin-users-page__identity h2 { margin: 0; overflow-wrap: anywhere; font: var(--type-section-title); color: var(--color-text-primary); }
@@ -10,4 +10,8 @@
 .admin-users-page__details div { min-width: 5rem; }
 .admin-users-page__details dt { font: var(--type-small); color: var(--color-text-secondary); }
 .admin-users-page__details dd { margin: var(--space-1) 0 0; font: var(--type-body); color: var(--color-text-primary); }
-@media (max-width: 520px) { .admin-users-page__user { grid-template-columns: auto minmax(0, 1fr); } .admin-users-page__details { grid-column: 1 / -1; justify-content: space-between; } }
+.admin-users-page__coins { min-width: 0; }
+.admin-users-page__coin-controls { display: flex; align-items: center; gap: var(--space-2); }
+.admin-users-page__coin-controls .form-input { min-width: 0; }
+@media (max-width: 768px) { .admin-users-page__user { grid-template-columns: auto minmax(0, 1fr) auto; } .admin-users-page__coins { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .admin-users-page__user { grid-template-columns: auto minmax(0, 1fr); } .admin-users-page__details { grid-column: 1 / -1; } .admin-users-page__coin-controls .button { min-width: 4.5rem; } }

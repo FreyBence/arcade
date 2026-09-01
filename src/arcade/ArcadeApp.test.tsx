@@ -197,3 +197,26 @@ describe('ArcadeApp logout behavior', () => {
     }).toEqual(expected)
   })
 })
+
+const administrationCases = [
+  { name: 'labels the admin entry point as Administration', input: { role: 'ADMIN' as const }, expected: { visible: true } },
+  { name: 'does not expose Administration to viewers', input: { role: 'VIEWER' as const }, expected: { visible: false } },
+]
+
+describe('ArcadeApp administration navigation', () => {
+  it.each(administrationCases)('$name', async ({ input, expected }) => {
+    vi.stubGlobal('fetch', vi.fn((path: string | URL | Request) => {
+      const requestPath = typeof path === 'string' ? path : path instanceof URL ? path.href : path.url
+      if (requestPath === '/api/login') return Promise.resolve(Response.json({ user: { ...USER, role: input.role }, accessToken: 'private-token' }))
+      return Promise.resolve(new Response(null, { status: 401 }))
+    }))
+    const user = userEvent.setup()
+    render(<ArcadeApp />)
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await user.type(screen.getByLabelText('Email'), USER.email)
+    await user.type(screen.getByLabelText('Password'), 'safe-password')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await screen.findByRole('button', { name: USER.name })
+    expect({ visible: screen.queryByRole('button', { name: 'Administration' }) !== null }).toEqual(expected)
+  })
+})

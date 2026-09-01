@@ -20,7 +20,7 @@ describe('admin users handler', () => {
     const authenticator: RequestAuthenticator = { authenticate }
     const searches: string[] = []
     const search = vi.fn((query: string) => { searches.push(query); return Promise.resolve([listedUser]) })
-    const response = await createAdminUsersHandler(authenticator, { search })(new Request(`http://localhost/api/admin/users?q=${input.query}`, { headers: { authorization: 'Bearer token' } }))
+    const response = await createAdminUsersHandler(authenticator, { search, setDinoCoins: vi.fn() })(new Request(`http://localhost/api/admin/users?q=${input.query}`, { headers: { authorization: 'Bearer token' } }))
     const body = await response.json() as { users?: typeof listedUser[]; error?: { code: string } }
     expect({ status: response.status, code: body.error?.code, search: searches[0], users: body.users }).toEqual(expected)
   })

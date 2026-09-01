@@ -1,6 +1,9 @@
 import { createAuthenticatedFetch, type ClientIdentityUser } from '../../shared/identity'
 
-export interface AdminUsersClient { search(query: string): Promise<ClientIdentityUser[]> }
+export interface AdminUsersClient {
+  search(query: string): Promise<ClientIdentityUser[]>
+  updateDinoCoins(userId: string, dinoCoins: number): Promise<ClientIdentityUser>
+}
 
 export class AdminUsersClientError extends Error {
   constructor() { super('The users could not be loaded.'); this.name = 'AdminUsersClientError' }
@@ -16,5 +19,15 @@ export function createBrowserAdminUsersClient(fetcher: typeof fetch = fetch): Ad
     try { body = await response.json() as typeof body } catch { /* handled below */ }
     if (!response.ok || !Array.isArray(body.users)) throw new AdminUsersClientError()
     return body.users
+  }, async updateDinoCoins(userId, dinoCoins) {
+    const response = await authenticatedFetch('/api/admin/users/dino-coins', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ userId, dinoCoins }),
+    })
+    let body: { user?: ClientIdentityUser } = {}
+    try { body = await response.json() as typeof body } catch { /* handled below */ }
+    if (!response.ok || !body.user) throw new AdminUsersClientError()
+    return body.user
   } }
 }

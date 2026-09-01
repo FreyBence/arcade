@@ -17,4 +17,13 @@ export class PrismaAdminUserRepository implements AdminUserRepository {
       orderBy: [{ name: 'asc' }, { email: 'asc' }],
     })
   }
+
+  async setDinoCoins(userId: string, dinoCoins: number) {
+    const result = await this.prisma.user.updateMany({ where: { id: userId }, data: { dinoCoins } })
+    if (result.count === 0) return null
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true, role: true, dinoCoins: true, profileImage: true },
+    })
+  }
 }
