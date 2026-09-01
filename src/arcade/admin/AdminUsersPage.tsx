@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import defaultProfilePicture from '../../assets/default-profile-dinosaur.png'
 import type { ClientIdentityUser } from '../../shared/identity'
+import type { UserRole } from '../../shared/auth'
 import { Button, Card, EmptyState, ErrorState, FieldMessage, FormField, Input, Label, LoadingState, PageContainer, PageIntro, useToast } from '../../shared/ui'
 import type { AdminUsersClient } from './adminUsersClient'
 import './AdminUsersPage.css'
@@ -20,9 +21,14 @@ export function AdminUsersPage({ client }: { client: AdminUsersClient }) {
     return () => { active = false }
   }, [client, query])
 
-  function updateUser(updated: ClientIdentityUser) {
+  function updateBalance(updated: ClientIdentityUser) {
     setUsers((current) => current.map((user) => user.id === updated.id ? updated : user))
     showToast({ message: `Updated ${updated.name}'s Dino Coin balance.`, variant: 'success' })
+  }
+
+  function updateRole(updated: ClientIdentityUser) {
+    setUsers((current) => current.map((user) => user.id === updated.id ? updated : user))
+    showToast({ message: `Updated ${updated.name}'s role to ${updated.role}.`, variant: 'success' })
   }
 
   return <PageContainer spacing="standard" className="admin-users-page">
@@ -35,11 +41,37 @@ export function AdminUsersPage({ client }: { client: AdminUsersClient }) {
       <Card className="admin-users-page__user">
         <img className="admin-users-page__avatar" src={user.profileImage ?? defaultProfilePicture} alt="" />
         <div className="admin-users-page__identity"><h2>{user.name}</h2><p>{user.email}</p></div>
-        <dl className="admin-users-page__details"><div><dt>Role</dt><dd>{user.role}</dd></div></dl>
-        <DinoCoinForm user={user} client={client} onUpdated={updateUser} />
+        <RoleForm user={user} client={client} onUpdated={updateRole} />
+        <DinoCoinForm user={user} client={client} onUpdated={updateBalance} />
       </Card>
     </li>)}</ul>}
   </PageContainer>
+}
+
+function RoleForm({ user, client, onUpdated }: { user: ClientIdentityUser; client: AdminUsersClient; onUpdated: (user: ClientIdentityUser) => void }) {
+  const [role, setRole] = useState<UserRole>(user.role)
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setSaving(true); setError(null)
+    try { const updated = await client.updateRole(user.id, role); setRole(updated.role); onUpdated(updated) }
+    catch (caught) { setError(caught instanceof Error ? caught.message : 'The role could not be updated. Please try again.') }
+    finally { setSaving(false) }
+  }
+
+  return <form className="admin-users-page__role" onSubmit={(event) => void submit(event)} noValidate>
+    <FormField invalid={Boolean(error)} disabled={saving}>
+      <Label htmlFor={`admin-role-${user.id}`}>Role</Label>
+      <div className="admin-users-page__role-controls">
+        <select id={`admin-role-${user.id}`} className="admin-users-page__role-select" value={role} onChange={(event) => setRole(event.target.value as UserRole)} disabled={saving}>
+          <option value="VIEWER">VIEWER</option><option value="ADMIN">ADMIN</option>
+        </select>
+        <Button type="submit" size="small" isLoading={saving} loadingLabel="Saving role" disabled={role === user.role}>Save role</Button>
+      </div>
+      {error && <FieldMessage variant="error">{error}</FieldMessage>}
+    </FormField>
+  </form>
 }
 
 function DinoCoinForm({ user, client, onUpdated }: { user: ClientIdentityUser; client: AdminUsersClient; onUpdated: (user: ClientIdentityUser) => void }) {
@@ -62,7 +94,7 @@ function DinoCoinForm({ user, client, onUpdated }: { user: ClientIdentityUser; c
   return <form className="admin-users-page__coins" onSubmit={(event) => void submit(event)} noValidate>
     <FormField invalid={Boolean(error)} disabled={saving}>
       <Label>Dino Coins</Label>
-      <div className="admin-users-page__coin-controls"><Input type="number" min="0" step="1" value={balance} onChange={(event) => setBalance(event.target.value)} /><Button type="submit" size="small" isLoading={saving} loadingLabel="Saving">Save</Button></div>
+      <div className="admin-users-page__coin-controls"><Input type="number" min="0" step="1" value={balance} onChange={(event) => setBalance(event.target.value)} /><Button type="submit" size="small" isLoading={saving} loadingLabel="Saving balance">Save balance</Button></div>
       {error && <FieldMessage variant="error">{error}</FieldMessage>}
     </FormField>
   </form>

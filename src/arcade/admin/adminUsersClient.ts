@@ -1,12 +1,14 @@
 import { createAuthenticatedFetch, type ClientIdentityUser } from '../../shared/identity'
+import type { UserRole } from '../../shared/auth'
 
 export interface AdminUsersClient {
   search(query: string): Promise<ClientIdentityUser[]>
   updateDinoCoins(userId: string, dinoCoins: number): Promise<ClientIdentityUser>
+  updateRole(userId: string, role: UserRole): Promise<ClientIdentityUser>
 }
 
 export class AdminUsersClientError extends Error {
-  constructor() { super('The users could not be loaded.'); this.name = 'AdminUsersClientError' }
+  constructor(message = 'The users could not be loaded.') { super(message); this.name = 'AdminUsersClientError' }
 }
 
 export function createBrowserAdminUsersClient(fetcher: typeof fetch = fetch): AdminUsersClient {
@@ -28,6 +30,14 @@ export function createBrowserAdminUsersClient(fetcher: typeof fetch = fetch): Ad
     let body: { user?: ClientIdentityUser } = {}
     try { body = await response.json() as typeof body } catch { /* handled below */ }
     if (!response.ok || !body.user) throw new AdminUsersClientError()
+    return body.user
+  }, async updateRole(userId, role) {
+    const response = await authenticatedFetch('/api/admin/users/role', {
+      method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ userId, role }),
+    })
+    let body: { user?: ClientIdentityUser; error?: { message?: string } } = {}
+    try { body = await response.json() as typeof body } catch { /* handled below */ }
+    if (!response.ok || !body.user) throw new AdminUsersClientError(body.error?.message)
     return body.user
   } }
 }

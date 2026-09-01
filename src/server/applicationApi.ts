@@ -11,7 +11,7 @@ import { createRequestAuthenticator } from './auth/requestAuthentication'
 import { createProfileHandler } from './profile'
 import { PrismaSessionRepository } from './auth/session'
 import { createPasswordChangeHandler } from './auth/passwordChange'
-import { createAdminDinoCoinsHandler, createAdminUsersHandler, PrismaAdminUserRepository } from './admin/users'
+import { createAdminDinoCoinsHandler, createAdminRoleHandler, createAdminUsersHandler, PrismaAdminUserRepository } from './admin/users'
 
 export interface ApplicationApi {
   register: (request: Request) => Promise<Response>
@@ -25,6 +25,7 @@ export interface ApplicationApi {
   googleCallback: (request: Request) => Promise<Response>
   adminUsers: (request: Request) => Promise<Response>
   updateAdminDinoCoins: (request: Request) => Promise<Response>
+  updateAdminRole: (request: Request) => Promise<Response>
 }
 
 export function createApplicationApi(
@@ -60,5 +61,6 @@ export function createApplicationApi(
     ),
     adminUsers: createAdminUsersHandler(authenticator, adminUsers),
     updateAdminDinoCoins: createAdminDinoCoinsHandler(authenticator, adminUsers),
+    updateAdminRole: createAdminRoleHandler(authenticator, adminUsers),
   }
 }

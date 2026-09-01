@@ -1,7 +1,10 @@
 import type { PrismaClient } from '../../../../generated/prisma/client'
-import type { AdminUserRepository } from './adminUsersTypes'
+import type { UserRole } from '../../../shared/auth'
+import type { AdminRoleRepository, AdminUserRepository } from './adminUsersTypes'
 
-export class PrismaAdminUserRepository implements AdminUserRepository {
+const ADMIN_USER_SELECTION = { id: true, name: true, email: true, role: true, dinoCoins: true, profileImage: true } as const
+
+export class PrismaAdminUserRepository implements AdminUserRepository, AdminRoleRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   search(query: string) {
@@ -13,7 +16,7 @@ export class PrismaAdminUserRepository implements AdminUserRepository {
           { email: { contains: search, mode: 'insensitive' } },
         ],
       } : undefined,
-      select: { id: true, name: true, email: true, role: true, dinoCoins: true, profileImage: true },
+      select: ADMIN_USER_SELECTION,
       orderBy: [{ name: 'asc' }, { email: 'asc' }],
     })
   }
@@ -23,7 +26,20 @@ export class PrismaAdminUserRepository implements AdminUserRepository {
     if (result.count === 0) return null
     return this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, role: true, dinoCoins: true, profileImage: true },
+      select: ADMIN_USER_SELECTION,
     })
+  }
+
+  setRole(userId: string, role: UserRole) {
+    return this.prisma.$transaction(async (transaction) => {
+      const target = await transaction.user.findUnique({ where: { id: userId }, select: { role: true } })
+      if (!target) return { status: 'not-found' } as const
+      if (target.role === 'ADMIN' && role === 'VIEWER') {
+        const administratorCount = await transaction.user.count({ where: { role: 'ADMIN' } })
+        if (administratorCount <= 1) return { status: 'last-admin' } as const
+      }
+      const user = await transaction.user.update({ where: { id: userId }, data: { role }, select: ADMIN_USER_SELECTION })
+      return { status: 'updated', user } as const
+    }, { isolationLevel: 'Serializable' })
   }
 }

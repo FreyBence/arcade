@@ -31,3 +31,24 @@ describe('PrismaAdminUserRepository Dino Coin update', () => {
     expect({ user, update: updateOperation, finds }).toEqual(expected)
   })
 })
+
+const roleCases = [
+  { name: 'promotes a viewer without counting admins', input: { current: 'VIEWER', role: 'ADMIN', admins: 1 }, expected: { status: 'updated', counts: 0, updates: 1 } },
+  { name: 'demotes an admin while another admin remains', input: { current: 'ADMIN', role: 'VIEWER', admins: 2 }, expected: { status: 'updated', counts: 1, updates: 1 } },
+  { name: 'prevents demotion of the last admin', input: { current: 'ADMIN', role: 'VIEWER', admins: 1 }, expected: { status: 'last-admin', counts: 1, updates: 0 } },
+  { name: 'reports a missing target', input: { current: null, role: 'ADMIN', admins: 1 }, expected: { status: 'not-found', counts: 0, updates: 0 } },
+] as const
+
+describe('PrismaAdminUserRepository role update', () => {
+  it.each(roleCases)('$name', async ({ input, expected }) => {
+    const count = vi.fn().mockResolvedValue(input.admins)
+    const update = vi.fn().mockResolvedValue({ id: 'user-1', role: input.role })
+    const transaction = { user: { findUnique: vi.fn().mockResolvedValue(input.current ? { role: input.current } : null), count, update } }
+    const transactionOptions: unknown[] = []
+    const runTransaction = vi.fn((operation: (client: typeof transaction) => unknown, options: unknown) => { transactionOptions.push(options); return operation(transaction) })
+    const repository = new PrismaAdminUserRepository({ $transaction: runTransaction } as never)
+    const result = await repository.setRole('user-1', input.role)
+    expect({ status: result.status, counts: count.mock.calls.length, updates: update.mock.calls.length }).toEqual(expected)
+    expect(transactionOptions[0]).toEqual({ isolationLevel: 'Serializable' })
+  })
+})

@@ -19,6 +19,7 @@ export function createApiRouter(api: ApplicationApi) {
     ['/api/auth/google/callback', { method: 'GET', handler: api.googleCallback }],
     ['/api/admin/users', { method: 'GET', handler: api.adminUsers }],
     ['/api/admin/users/dino-coins', { method: 'PATCH', handler: api.updateAdminDinoCoins }],
+    ['/api/admin/users/role', { method: 'PATCH', handler: api.updateAdminRole }],
   ])
 
   return async function routeApiRequest(request: Request): Promise<Response> {
